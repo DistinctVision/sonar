@@ -12,8 +12,9 @@ for i in range(5):
     star.append([math.cos(angle) * star_scale, math.sin(angle) * star_scale])
 
 
-def draw_star(ax, M: np.ndarray):
-    t_star = [np.dot(M, np.array(v)) for v in star]
+def draw_star(ax, M: np.ndarray, alpha: float = 1):
+    t_star = [np.dot(M, np.array(v + [1])) for v in star]
+    t_star = [(v[0] / v[2], v[1] / v[2]) for v in t_star]
     x = []
     y = []
     for i in range(5):
@@ -23,11 +24,11 @@ def draw_star(ax, M: np.ndarray):
         x.append(t_star[i2][0])
         y.append(t_star[i1][1])
         y.append(t_star[i2][1])
-    ax.plot(x, y)
+    ax.plot(x, y, color='#0077FF', alpha=alpha)
 
 
 def create_plot_with_grid():
-    fig, ax = plt.subplots(figsize=(7, 7))
+    fig, ax = plt.subplots(figsize=(5, 5))
     ax.set_xlim(-10, 10)
     ax.set_ylim(-10, 10)
     ax.minorticks_on()
@@ -59,7 +60,8 @@ def picture1():
     ax.plot([0.0, 2.5], [4.0, 4.0], linestyle="--", color="gray")
     ax.scatter([0, ], [4.0, ], 20, color='gray')
     ax.annotate('y', xy=(0.0, 4.0), xycoords='data', xytext=(0.0, 4.0), textcoords='offset points', fontsize=16)
-
+    ax.figure.savefig('./assets/Figure_1.png')
+    
 
 def picture2():
     v_a = (5.0, 4.0)
@@ -124,15 +126,45 @@ def picture2():
     ax.annotate(r'$\vec c$', xy=(v_d[0] * 0.5, v_d[1] * 0.5),
                 xycoords='data', xytext=(0.0, 15.0), textcoords='offset points', fontsize=24, color='b')
     ax.arrow(0, 0, *v_d, head_width=0.3, head_length=0.3, fc='b', ec='b', zorder=20.0, length_includes_head=True)
+    ax.figure.savefig('./assets/Figure_2.png')
 
 
 def picture3():
     fig, ax = create_plot_with_grid()
-    draw_star(ax, np.identity(2))
+    draw_star(ax, np.identity(3))
+    ax.figure.savefig('./assets/Figure_3.png')
+
+def picture4():
+    fig, ax = create_plot_with_grid()
+    alpha = 20 * math.pi / 180
+    draw_star(ax, np.identity(3), 0.2)
+    M = [[math.cos(alpha), - math.sin(alpha), 0],
+         [math.sin(alpha), math.cos(alpha), 0],
+         [0, 0, 1]]
+    draw_star(ax, M, 1)
+    ax.figure.savefig('./assets/Figure_4.png')
+
+def picture5():
+    fig, ax = create_plot_with_grid()
+    alpha = 20 * math.pi / 180
+    draw_star(ax, np.identity(3), 0.15)
+    M1 = [[math.cos(alpha), - math.sin(alpha), 0],
+          [math.sin(alpha), math.cos(alpha), 0],
+          [0, 0, 1]]
+    beta = 10 * math.pi / 180
+    draw_star(ax, np.identity(3), 0.15)
+    M2 = [[math.cos(beta), - math.sin(beta), 0],
+          [math.sin(beta), math.cos(beta), 0],
+          [0, 0, 1]]
+    draw_star(ax, M1, 0.3)
+    draw_star(ax, np.dot(M2, M1), 1.0)
+    ax.figure.savefig('./assets/Figure_5.png')
 
 
 picture1()
 picture2()
 picture3()
-plt.show()
+picture4()
+picture5()
+#plt.show()
 sys.exit()
