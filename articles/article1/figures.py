@@ -160,11 +160,39 @@ def picture5():
     draw_star(ax, np.dot(M2, M1), 1.0)
     ax.figure.savefig('./assets/Figure_5.png')
 
+def picture6():
+    fig, ax = create_plot_with_grid()
+    alpha = 30 * math.pi / 180
+    R = [[math.cos(alpha), - math.sin(alpha), 0],
+         [math.sin(alpha), math.cos(alpha), 0],
+         [0, 0, 1]]
+    S = [[1.5, 0, 0], 
+         [0, 0.5, 0],
+         [0, 0, 1]]
+    draw_star(ax, R, 0.2)
+    draw_star(ax, np.dot(S, R), 1.0)
+    ax.figure.savefig('./assets/Figure_6.png')
+
+def picture7():
+    fig, ax = create_plot_with_grid()
+    alpha = 30 * math.pi / 180
+    R = [[math.cos(alpha), - math.sin(alpha), 0],
+         [math.sin(alpha), math.cos(alpha), 0],
+         [0, 0, 1]]
+    S = [[1.5, 0, 0], 
+         [0, 0.5, 0],
+         [0, 0, 1]]
+    draw_star(ax, S, 0.2)
+    draw_star(ax, np.dot(R, S), 1.0)
+    ax.figure.savefig('./assets/Figure_7.png')
+
 
 picture1()
 picture2()
 picture3()
 picture4()
 picture5()
+picture6()
+picture7()
 #plt.show()
 sys.exit()

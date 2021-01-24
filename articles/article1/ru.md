@@ -49,26 +49,26 @@ $\vec c = \vec a \cdot {(\vec a}^T \vec b)$
 
 ![](./assets/Figure_3.png)
 
-Чтобы ее нарисовать, заданы координаты ее вершин, от которых строятся линии. Координаты заданы в виде набора векторов. Итак, координаты наших вершин заданы таким образом $\vec v_i = ({v_i}_x, {v_i}_y)^T$. Наша координатная сетка задана двумя осями - единичными ортогональными (перпендикулярными) векторами. В двумерном пространстве к вектору можно получить два перпендулярных вектора такой же длины: $perp(\vec v) = \begin{pmatrix}\mp v_y & \pm v_x \end{pmatrix}^T$ - левый и правый перпендикуляры. Берем вектор, задающим ось $X$ - $\vec{ax}=\begin{pmatrix} 1 & 0 \end{pmatrix}^T$ и правый перпендикуляр - ось $Y$ - $\vec{ax}=\begin{pmatrix} 0 & 1 \end{pmatrix}^T$.  
+Чтобы ее нарисовать, заданы координаты ее вершин, от которых строятся линии. Координаты заданы в виде набора векторов. Итак, координаты наших вершин заданы таким образом $\vec v_i = ({v_i}_x, {v_i}_y)^T$. Наша координатная сетка задана двумя осями - единичными ортогональными (перпендикулярными) векторами. В двумерном пространстве к вектору можно получить два перпендулярных вектора такой же длины: $perp(\vec v) = \begin{pmatrix}\mp v_y & \pm v_x \end{pmatrix}^T$ - левый и правый перпендикуляры. Берем вектор, задающим ось $X$ - $\vec{aX}=\begin{pmatrix} 1 & 0 \end{pmatrix}^T$ и правый перпендикуляр - ось $Y$ - $\vec{aX}=\begin{pmatrix} 0 & 1 \end{pmatrix}^T$.  
 Получим проекции на оси при помощи наших векторов, задающих оси:  
-$x = \vec{ax}^T \vec{v_i} = \begin{pmatrix} 1 & 0 \end{pmatrix}^T \vec v = v_x$  
-$y = \vec{ay}^T \vec{v_i} = \begin{pmatrix} 0 & 1 \end{pmatrix}^T \vec v = v_y$  
+$x = \vec{aX}^T \vec{v_i} = \begin{pmatrix} 1 & 0 \end{pmatrix}^T \vec v = v_x$  
+$y = \vec{aY}^T \vec{v_i} = \begin{pmatrix} 0 & 1 \end{pmatrix}^T \vec v = v_y$  
 Сюрприз - они совпадают с компонентами наших векторов, которые уже и являются проекциями вектора на оси. 
-Теперь попробуем как-то изменить нашу фигуру - повернем ее на угол $\alpha$. Для этого повернем векторы $\vec{ax}$ и $\vec{ay}$, задающих оси координат. Поворот вектора $\begin{pmatrix} 1 & 0 \end{pmatrix}^T$ (ось $X$ - $\vec{ax}$) задаются косинусом и синусом угла - $\vec{ax}=rotate(\begin{pmatrix} 0 & 1 \end{pmatrix}^T, \alpha) = \begin{pmatrix} \cos(\alpha) & \sin(\alpha) \end{pmatrix}^T$. А чтобы получить вектор оси $Y$, возьмем перпендикуляр от $\vec{ax}$: $\vec{ay}=\begin{pmatrix} -\sin(\alpha) & \cos(\alpha) \end{pmatrix}^T$. Выполнив эту трансформацию, получаем новую фигуру:  
-$\vec{v_i'} = \begin{pmatrix} \vec{v_i}^T \vec{ax} & \vec{v_i}^T \vec{ay} \end{pmatrix}^T$  
+Теперь попробуем как-то изменить нашу фигуру - повернем ее на угол $\alpha$. Для этого повернем векторы $\vec{aX}$ и $\vec{aY}$, задающих оси координат. Поворот вектора $\begin{pmatrix} 1 & 0 \end{pmatrix}^T$ (ось $X$ - $\vec{aX}$) задаются косинусом и синусом угла - $\vec{aX}=rotate(\begin{pmatrix} 0 & 1 \end{pmatrix}^T, \alpha) = \begin{pmatrix} \cos(\alpha) & \sin(\alpha) \end{pmatrix}^T$. А чтобы получить вектор оси $Y$, возьмем перпендикуляр от $\vec{aX}$: $\vec{aY}=\begin{pmatrix} -\sin(\alpha) & \cos(\alpha) \end{pmatrix}^T$. Выполнив эту трансформацию, получаем новую фигуру:  
+$\vec{v_i'} = \begin{pmatrix} \vec{v_i}^T \vec{aX} & \vec{v_i}^T \vec{aY} \end{pmatrix}^T$  
 
 ![$\alpha=20^\circ$](./assets/Figure_4.png)
 
-Вектора $\vec{ax}$ и $\vec{ay}$ являются ортонормированным базисом, потому как вектора ортогональны между собой (а значит базис ортогонален), а вектора имеют единичную длину, т.е. нормированы.
+Вектора $\vec{aX}$ и $\vec{aY}$ являются ортонормированным базисом, потому как вектора ортогональны между собой (а значит базис ортогонален), а вектора имеют единичную длину, т.е. нормированы.
 
-Теперь мы говорим о нескольких системах координат - базовая система координат - назовем ее мировой, и локальную для нашего объекта, которую мы поворачивали. Также удобно объединить наш набор векторов в одну матрицу - $R = \begin{pmatrix} \vec{ax} & \vec{ay} \end{pmatrix} = \begin{pmatrix} \cos{\alpha} & -\sin(\alpha) \\ \sin(\alpha) & \cos(\alpha) \end{pmatrix}$  
-Тогда $\vec{v_i'} = \begin{pmatrix} \vec{v_i}^T \vec{ax} & \vec{v_i}^T \vec{ay} \end{pmatrix}^T = \begin{pmatrix} \vec{ax} & \vec{ay} \end{pmatrix} \vec{v_i} = R \cdot \vec{v_i}$.
+Теперь мы говорим о нескольких системах координат - базовая система координат - назовем ее мировой, и локальную для нашего объекта, которую мы поворачивали. Также удобно объединить наш набор векторов в одну матрицу - $R = \begin{pmatrix} \vec{aX} & \vec{aY} \end{pmatrix} = \begin{pmatrix} \cos{\alpha} & -\sin(\alpha) \\ \sin(\alpha) & \cos(\alpha) \end{pmatrix}$  
+Тогда $\vec{v_i'} = \begin{pmatrix} \vec{v_i}^T \vec{aX} & \vec{v_i}^T \vec{aY} \end{pmatrix}^T = \begin{pmatrix} \vec{aX} & \vec{aY} \end{pmatrix} \vec{v_i} = R \cdot \vec{v_i}$.
 Короче $\vec{v_i'} = R \cdot \vec{v_i}$.  
 Матрица $R$, состовляющая ортонормированный базис и описывающая поворот, называется матрицей поворота. Также имеет ряд полезных свойств, которые следует иметь ввиду:  
 * $|R|=1|$ - определитель матрицы равен 1.
 * $R^T = R^{-1}$. 
 * $R^T R = R^{-1} R = I$, где $I$ - единичная матрица.  
-$R^T R = \begin{pmatrix}\vec{ax} & \vec{ay}\end{pmatrix}^T \begin{pmatrix}\vec{ax} & \vec{ay}\end{pmatrix} = \begin{pmatrix}\vec{ax}^T\vec{ax} & \vec{ax}^T\vec{ay} \\ \vec{ay}^T\vec{ax} & \vec{ay}^T\vec{ay}\end{pmatrix} = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$.
+$R^T R = \begin{pmatrix}\vec{aX} & \vec{aY}\end{pmatrix}^T \begin{pmatrix}\vec{aX} & \vec{aY}\end{pmatrix} = \begin{pmatrix}\vec{aX}^T\vec{aX} & \vec{aX}^T\vec{aY} \\ \vec{aY}^T\vec{aX} & \vec{aY}^T\vec{aY}\end{pmatrix} = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$.
 * $\vec{v'} = R \vec v \Rightarrow |\vec{v'}|=|\vec v|$, поворот не меняет длины вектора.
 * зная $\vec{v'}$ и $R$, можем получить исходный вектор $\vec v$ - $\vec v = R^{-1} \vec{v'} = R^T \vec{v'}$. Т.е. умножая вектор на матрицу поврота мы выполняем преобразование координат вектора из локальной системы координат объекта в мировую, но также мы можем поступать и наоборот - преобразовывать мировые координаты в локальную систему координат объекта, умножая на обратную матрицу поврота. Эти моменты хорошо бы хорошо понимать.
 
