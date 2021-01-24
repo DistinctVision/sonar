@@ -1,8 +1,42 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import Arc
+from mpl_toolkits.mplot3d import Axes3D, proj3d
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+from matplotlib.patches import FancyArrowPatch
+import matplotlib.colors as colors
+from matplotlib.text import Annotation
 import numpy as np
 import math
 import sys
+
+
+class Arrow3D(FancyArrowPatch):
+    def __init__(self, x, y, z, dx, dy, dz, *args, **kwargs):
+        super().__init__((0,0), (0,0), *args, **kwargs)
+        self._xyz = (x,y,z)
+        self._dxdydz = (dx,dy,dz)
+
+    def draw(self, renderer):
+        x1,y1,z1 = self._xyz
+        dx,dy,dz = self._dxdydz
+        x2,y2,z2 = (x1+dx,y1+dy,z1+dz)
+
+        xs, ys, zs = proj3d.proj_transform((x1,x2),(y1,y2),(z1,z2), renderer.M)
+        self.set_positions((xs[0],ys[0]),(xs[1],ys[1]))
+        super().draw(renderer)
+
+class Annotation3D(Annotation):
+    '''Annotate the point xyz with text s'''
+
+    def __init__(self, s, xyz, *args, **kwargs):
+        Annotation.__init__(self,s, xy=(0,0), *args, **kwargs)
+        self._verts3d = xyz        
+
+    def draw(self, renderer):
+        xs3d, ys3d, zs3d = self._verts3d
+        xs, ys, zs = proj3d.proj_transform(xs3d, ys3d, zs3d, renderer.M)
+        self.xy=(xs,ys)
+        Annotation.draw(self, renderer)
 
 star_scale = 5
 
@@ -10,6 +44,18 @@ star = []
 for i in range(5):
     angle = (i / 5) * math.pi * 2.0 + math.pi / 2
     star.append([math.cos(angle) * star_scale, math.sin(angle) * star_scale])
+
+cube_vertices = [[-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
+                 [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]]
+cube_edges = [[0, 1], [1, 2], [2, 3], [3, 0],
+              [4, 5], [5, 6], [6, 7], [7, 4],
+              [0, 4], [1, 5], [2, 6], [3, 7]]
+
+
+def crossProduct(a, b):
+    return [(a[1] * b[2]) - (a[2] * b[1]),
+            (a[2] * b[0]) - (a[0] * b[2]),
+            (a[0] * b[1]) - (a[1] * b[0])]
 
 
 def draw_star(ax, M: np.ndarray, alpha: float = 1):
@@ -25,6 +71,19 @@ def draw_star(ax, M: np.ndarray, alpha: float = 1):
         y.append(t_star[i1][1])
         y.append(t_star[i2][1])
     ax.plot(x, y, color='#0077FF', alpha=alpha)
+
+
+def get_rotation_matrix(angles: tuple):
+    cos_a, sin_a = math.cos(angles[0]), math.sin(angles[0])
+    cos_b, sin_b = math.cos(angles[1]), math.sin(angles[1])
+    cos_c, sin_c = math.cos(angles[2]), math.sin(angles[2])
+    return np.array[[cos_a * cos_c - sin_a * cos_b * sin_c,
+                     - cos_a * sin_c - sin_a * cos_b * cos_c,
+                     sin_a * sin_b],
+                    [sin_a * cos_c + cos_a * cos_b * sin_c,
+                     - sin_a * sin_c + cos_a * cos_b * cos_c,
+                     - cos_a * sin_b],
+                    [sin_b * sin_c, sin_b * cos_c, cos_b]];
 
 
 def create_plot_with_grid():
@@ -46,6 +105,25 @@ def create_plot_with_grid():
 
     return fig, ax
 
+def create_plot_with_grid_3d():
+    fig = plt.figure(figsize=(8, 8))
+    ax = fig.add_subplot(111, projection='3d')
+    ax.set_xlim(-1, 4)
+    ax.set_ylim(-1, 4)
+    ax.set_zlim(-1, 4)
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    major_ticks = [-1, 4]
+    minor_ticks = [x for x in range(-1, 4)]
+    ax.set_xticks(major_ticks, minor=False)
+    ax.set_yticks(major_ticks, minor=False)
+    ax.set_zticks(major_ticks, minor=False)
+    ax.set_xticks(minor_ticks, minor=True)
+    ax.set_yticks(minor_ticks, minor=True)
+    ax.set_zticks(minor_ticks, minor=True)
+
+    return fig, ax
 
 def picture1():
     fig, ax = create_plot_with_grid()
@@ -152,11 +230,10 @@ def picture5():
           [math.sin(alpha), math.cos(alpha), 0],
           [0, 0, 1]]
     beta = 10 * math.pi / 180
-    draw_star(ax, np.identity(3), 0.15)
+    draw_star(ax, M1, 0.3)
     M2 = [[math.cos(beta), - math.sin(beta), 0],
           [math.sin(beta), math.cos(beta), 0],
           [0, 0, 1]]
-    draw_star(ax, M1, 0.3)
     draw_star(ax, np.dot(M2, M1), 1.0)
     ax.figure.savefig('./assets/Figure_5.png')
 
@@ -186,6 +263,64 @@ def picture7():
     draw_star(ax, np.dot(R, S), 1.0)
     ax.figure.savefig('./assets/Figure_7.png')
 
+def picture8():
+    fig, ax = create_plot_with_grid_3d()
+
+    o = [0, 0, 0]
+    v_a = [2, 0, 1]
+    v_b = [1.5, 1, -0.5]
+    v_c = crossProduct(v_a, v_b)
+    v_d = [a + b for a, b in zip(v_a, v_b)]
+    ax.add_artist(Arrow3D(0, 0, 0, *v_a, mutation_scale=20,
+                  arrowstyle="-|>", fc='r', ec='r'))
+    ax.add_artist(Arrow3D(0, 0, 0, *v_b, mutation_scale=20,
+                  arrowstyle="-|>", fc='g', ec='g'))
+    ax.add_artist(Arrow3D(0, 0, 0, *v_c, mutation_scale=15,
+                  fc='b', ec='b'))
+    ax.plot(*[[a, b] for a, b in zip(v_a, v_d)], linestyle='--', c="gray")
+    ax.plot(*[[a, b] for a, b in zip(v_b, v_d)], linestyle='--', c="gray")
+
+    tri = Poly3DCollection([o, v_a, v_d, o, v_d, v_b], color='gray', linewidths=0, alpha=0.3)
+    ax.add_collection3d(tri)
+
+    ax.scatter(*list(zip(o, v_a, v_b, v_d)),
+                    s=20,
+                    marker='o',
+                    color='black')
+    ax.add_artist(Annotation3D('A', o, 
+                    xytext=(0, 10),
+                    textcoords='offset points',
+                    bbox=dict(boxstyle="round", fc="lightyellow")))
+    ax.add_artist(Annotation3D('B', v_a, 
+                    xytext=(0, 10),
+                    textcoords='offset points',
+                    bbox=dict(boxstyle="round", fc="lightyellow")))
+    ax.add_artist(Annotation3D('C', v_b, 
+                    xytext=(0, 15),
+                    textcoords='offset points',
+                    bbox=dict(boxstyle="round", fc="lightyellow")))
+    ax.add_artist(Annotation3D('D', v_d, 
+                    xytext=(0, 10),
+                    textcoords='offset points',
+                    bbox=dict(boxstyle="round", fc="lightyellow")))
+
+    ax.add_artist(Annotation3D(r'$\vec{a}$', np.multiply(v_a, 0.5), 
+                    xytext=(0, 10),
+                    textcoords='offset points',
+                    bbox=dict(boxstyle="round", fc="white")))
+
+    ax.add_artist(Annotation3D(r'$\vec{b}$', np.multiply(v_b, 0.5), 
+                    xytext=(0, 10),
+                    textcoords='offset points',
+                    bbox=dict(boxstyle="round", fc="white")))
+
+    ax.add_artist(Annotation3D(r'$\vec{c}$', np.multiply(v_c, 0.5), 
+                    xytext=(0, 10),
+                    textcoords='offset points',
+                    bbox=dict(boxstyle="round", fc="white")))
+    ax.view_init(elev=20., azim=60)
+    ax.figure.savefig('./assets/Figure_8.png')
+
 
 picture1()
 picture2()
@@ -194,5 +329,6 @@ picture4()
 picture5()
 picture6()
 picture7()
+picture8()
 #plt.show()
 sys.exit()
