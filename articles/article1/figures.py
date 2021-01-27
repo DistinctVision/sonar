@@ -276,7 +276,7 @@ def picture7():
 def picture8():
     o = [0, 0, 0]
     v_a = [2, 0, 1]
-    v_b = [1.5, 1, -0.5]
+    v_b = [0.5, 1.5, -0.5]
     v_c = crossProduct(v_a, v_b)
     v_d = [a + b for a, b in zip(v_a, v_b)]
 
@@ -285,18 +285,22 @@ def picture8():
     nv_c = normalized(v_c)
 
     fig, ax = create_plot_with_grid_3d()
+    ax.plot(*[[a, b] for a, b in zip(v_a, v_d)], linestyle='--', c="gray", zorder=0)
+    ax.plot(*[[a, b] for a, b in zip(v_b, v_d)], linestyle='--', c="gray", zorder=0)
+    ax.plot(*[[a, b, c] for a, b, c in zip(np.multiply(nv_a, 0.3), 
+                                           np.multiply(nv_a, 0.3) + np.multiply(nv_c, 0.3), 
+                                           np.multiply(nv_c, 0.3))], linestyle='-', c="gray", zorder=0)
+    ax.plot(*[[a, b, c] for a, b, c in zip(np.multiply(nv_b, 0.3), 
+                                           np.multiply(nv_b, 0.3) + np.multiply(nv_c, 0.3), 
+                                           np.multiply(nv_c, 0.3))], linestyle='-', c="gray", zorder=0)
     ax.add_artist(Arrow3D(0, 0, 0, *v_a, mutation_scale=20,
                   arrowstyle="-|>", fc='r', ec='r'))
     ax.add_artist(Arrow3D(0, 0, 0, *v_b, mutation_scale=20,
                   arrowstyle="-|>", fc='g', ec='g'))
     ax.add_artist(Arrow3D(0, 0, 0, *v_c, mutation_scale=15,
                   fc='b', ec='b'))
-    ax.plot(*[[a, b] for a, b in zip(v_a, v_d)], linestyle='--', c="gray")
-    ax.plot(*[[a, b] for a, b in zip(v_b, v_d)], linestyle='--', c="gray")
-    ax.plot(*[[a, b] for a, b in zip(np.multiply(nv_a, 0.3), np.multiply(nv_c, 0.3))], linestyle='--', c="gray")
 
-    verts = [o, v_a, v_d]
-    tri = Poly3DCollection(verts, color='gray', linewidths=0, alpha=0.3)
+    tri = Poly3DCollection([o, v_a, v_d, o, v_d, v_b], color='gray', linewidths=0, alpha=0.3)
     ax.add_collection3d(tri)
 
     ax.scatter(*list(zip(o, v_a, v_b, v_d)),
@@ -304,7 +308,7 @@ def picture8():
                     marker='o',
                     color='black')
     ax.add_artist(Annotation3D('A', o, 
-                    xytext=(0, 10),
+                    xytext=(0, 20),
                     textcoords='offset points',
                     bbox=dict(boxstyle="round", fc="lightyellow")))
     ax.add_artist(Annotation3D('B', v_a, 
@@ -326,7 +330,7 @@ def picture8():
                     bbox=dict(boxstyle="round", fc="white")))
 
     ax.add_artist(Annotation3D(r'$\vec{b}$', np.multiply(v_b, 0.5), 
-                    xytext=(0, 10),
+                    xytext=(5, 10),
                     textcoords='offset points',
                     bbox=dict(boxstyle="round", fc="white")))
 
@@ -334,7 +338,7 @@ def picture8():
                     xytext=(0, 10),
                     textcoords='offset points',
                     bbox=dict(boxstyle="round", fc="white")))
-    ax.view_init(elev=20., azim=60)
+    ax.view_init(elev=15., azim=60)
     ax.figure.savefig('./assets/Figure_8.png')
 
 
@@ -375,7 +379,7 @@ def picture9():
 #picture5()
 #picture6()
 #picture7()
-picture8()
-#picture9()
+#picture8()
+picture9()
 plt.show()
 sys.exit()
