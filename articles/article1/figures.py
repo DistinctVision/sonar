@@ -327,23 +327,23 @@ def picture8():
     ax.add_artist(Annotation3D(r'$\vec{a}$', np.multiply(v_a, 0.5), 
                     xytext=(0, 10),
                     textcoords='offset points',
-                    bbox=dict(boxstyle="round", fc="white")))
+                    bbox=dict(boxstyle="round", fc="white"), c="r"))
 
     ax.add_artist(Annotation3D(r'$\vec{b}$', np.multiply(v_b, 0.5), 
                     xytext=(5, 10),
                     textcoords='offset points',
-                    bbox=dict(boxstyle="round", fc="white")))
+                    bbox=dict(boxstyle="round", fc="white"), c="g"))
 
     ax.add_artist(Annotation3D(r'$\vec{c}$', np.multiply(v_c, 0.5), 
                     xytext=(0, 10),
                     textcoords='offset points',
-                    bbox=dict(boxstyle="round", fc="white")))
+                    bbox=dict(boxstyle="round", fc="white"), c="b"))
     ax.view_init(elev=15., azim=60)
     ax.figure.savefig('./assets/Figure_8.png')
 
 
 def picture9():
-    v = np.array([-0.6, 0.3, 0.9])
+    v = np.array([-0.5, 0.3, 0.8])
     n = np.array(normalized([1, 0, 3]))
     angle = 140 * (math.pi / 180)
 
@@ -353,10 +353,14 @@ def picture9():
     v_dx_dy = dx * math.cos(angle) + dy * math.sin(angle)
     v_ = v_dx_dy + dz
 
+    axisX, axisY = normalized(dx), normalized(dy)
+
     fig, ax = create_plot_with_grid_3d()
     ax.set_xlim(-1, 1)
     ax.set_ylim(-1, 1)
     ax.set_zlim(0, 1)
+    ax.add_artist(Arrow3D(0, 0, 0, *list(axisX), mutation_scale=20, arrowstyle="->", fc='gray', ec='gray'))
+    ax.add_artist(Arrow3D(0, 0, 0, *list(axisY), mutation_scale=20, arrowstyle="->", fc='gray', ec='gray'))
     ax.add_artist(Arrow3D(0, 0, 0, *list(v), mutation_scale=15, fc='r', ec='r'))
     ax.add_artist(Arrow3D(0, 0, 0, *list(n), mutation_scale=20, arrowstyle="-|>", fc='b', ec='b'))
     ax.add_artist(Arrow3D(0, 0, 0, *list(v_), mutation_scale=15, fc='g', ec='g'))
@@ -383,42 +387,52 @@ def picture9():
     ax.add_artist(Annotation3D(r'$\vec{n}$', np.multiply(n, 0.75), 
                     xytext=(0, 5),
                     textcoords='offset points',
-                    bbox=dict(boxstyle="round", fc="white")))
+                    bbox=dict(boxstyle="round", fc="white"), c="b"))
 
-    ax.add_artist(Annotation3D(r'$\vec{dz}$', np.multiply(dz, 0.5), 
+    ax.add_artist(Annotation3D(r'$\vec{v_\parallel}$', np.multiply(dz, 0.5), 
                     xytext=(0, 5),
                     textcoords='offset points',
                     bbox=dict(boxstyle="round", fc="white")))
 
-    ax.add_artist(Annotation3D(r'$\vec{dx}$', np.multiply(dx, 0.5), 
+    ax.add_artist(Annotation3D(r'$\vec{v_\perp}$', np.multiply(dx, 0.5), 
                     xytext=(0, 5),
                     textcoords='offset points',
-                    bbox=dict(boxstyle="round", fc="white")))
+                    bbox=dict(boxstyle="round", fc="white"), c="r"))
 
-    ax.add_artist(Annotation3D(r'$\vec{dy}$', np.multiply(dy, 0.5), 
-                    xytext=(0, 5),
+    ax.add_artist(Annotation3D(r'$\vec{n} \times \vec{v_\perp}$', np.multiply(dy, 0.5), 
+                    xytext=(0, -5),
                     textcoords='offset points',
-                    bbox=dict(boxstyle="round", fc="white")))
+                    bbox=dict(boxstyle="round", fc="white"), c="y"))
 
     ax.add_artist(Annotation3D(r'$\vec{v}$', np.multiply(v, 0.5), 
                     xytext=(0, 5),
                     textcoords='offset points',
-                    bbox=dict(boxstyle="round", fc="white")))
+                    bbox=dict(boxstyle="round", fc="white"), c="r"))
 
     ax.add_artist(Annotation3D(r"$\vec{v'}$", np.multiply(v_, 0.5), 
                     xytext=(0, 5),
                     textcoords='offset points',
-                    bbox=dict(boxstyle="round", fc="white")))
+                    bbox=dict(boxstyle="round", fc="white"), c="g"))
 
-    ax.add_artist(Annotation3D(r"$\vec{dx'}$", np.multiply(v_dx_dy, 0.5), 
-                    xytext=(0, 5),
+    ax.add_artist(Annotation3D(r"$\vec{v_{\perp rot}}$", np.multiply(v_dx_dy, 0.5), 
+                    xytext=(0, 7),
                     textcoords='offset points',
-                    bbox=dict(boxstyle="round", fc="white")))
+                    bbox=dict(boxstyle="round", fc="white"), c="g"))
 
     ax.add_artist(Annotation3D(r"$\alpha^{\circ}$", np.multiply(normalized(dx + v_dx_dy), 0.4), 
                     xytext=(0, -10),
                     textcoords='offset points',
                     bbox=dict(boxstyle="round", fc="white")))
+
+    ax.add_artist(Annotation3D(r"$\vec{aX}$", np.multiply(axisX, 1.0), 
+                    xytext=(0, 15),
+                    textcoords='offset points',
+                    bbox=dict(boxstyle="round", fc="white"), c="gray"))
+
+    ax.add_artist(Annotation3D(r"$\vec{aY}$", np.multiply(axisY, 1.0), 
+                    xytext=(5, 15),
+                    textcoords='offset points',
+                    bbox=dict(boxstyle="round", fc="white"), c="gray"))
 
     ax.view_init(elev=50, azim=-130)
     ax.figure.savefig('./assets/Figure_9.png')
