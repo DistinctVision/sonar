@@ -52,10 +52,17 @@ cube_edges = [[0, 1], [1, 2], [2, 3], [3, 0],
               [0, 4], [1, 5], [2, 6], [3, 7]]
 
 
+def dotProduct(a, b):
+    return sum(x * y for x, y in zip(a, b))
+
 def crossProduct(a, b):
     return [(a[1] * b[2]) - (a[2] * b[1]),
             (a[2] * b[0]) - (a[0] * b[2]),
             (a[0] * b[1]) - (a[1] * b[0])]
+
+def normalized(v):
+    l = math.sqrt(dotProduct(v, v))
+    return [x / l for x in v]
 
 
 def draw_star(ax, M: np.ndarray, alpha: float = 1):
@@ -181,19 +188,19 @@ def picture2():
     ax.scatter([v_d[0], ], [v_d[1], ], 20, color='gray')
 
     ax.scatter([0.0, ], [0.0, ], 20, color='gray')
-    ax.annotate(r'$A$', xy=(0, 0),
+    ax.annotate(r'$O$', xy=(0, 0),
                 xycoords='data', xytext=(0.0, 10.0), textcoords='offset points', fontsize=24)
 
     ax.scatter([v_a[0], ], [v_a[1], ], 20, color='gray')
-    ax.annotate(r'$B$', xy=v_a,
+    ax.annotate(r'$A$', xy=v_a,
                 xycoords='data', xytext=(0.0, 10.0), textcoords='offset points', fontsize=24)
 
     ax.scatter([v_b[0], ], [v_b[1], ], 20, color='gray')
-    ax.annotate(r'$C$', xy=v_b,
+    ax.annotate(r'$B$', xy=v_b,
                 xycoords='data', xytext=(0.0, 10.0), textcoords='offset points', fontsize=24)
 
     ax.scatter([v_d[0], ], [v_d[1], ], 20, color='gray')
-    ax.annotate(r'$D$', xy=v_d,
+    ax.annotate(r'$C$', xy=v_d,
                 xycoords='data', xytext=(0.0, 10.0), textcoords='offset points', fontsize=24)
 
     angle_dir = ((nv_a[0] + nv_b[0]) * 0.5, (nv_a[1] + nv_b[1]) * 0.5)
@@ -214,32 +221,31 @@ def picture3():
     ax.figure.savefig('./assets/Figure_3.png')
 
 def picture4():
-    fig, ax = create_plot_with_grid()
     alpha = 20 * math.pi / 180
-    draw_star(ax, np.identity(3), 0.2)
     M = [[math.cos(alpha), - math.sin(alpha), 0],
          [math.sin(alpha), math.cos(alpha), 0],
          [0, 0, 1]]
+    fig, ax = create_plot_with_grid()
+    draw_star(ax, np.identity(3), 0.2)
     draw_star(ax, M, 1)
     ax.figure.savefig('./assets/Figure_4.png')
 
 def picture5():
-    fig, ax = create_plot_with_grid()
     alpha = 20 * math.pi / 180
-    draw_star(ax, np.identity(3), 0.15)
     M1 = [[math.cos(alpha), - math.sin(alpha), 0],
           [math.sin(alpha), math.cos(alpha), 0],
           [0, 0, 1]]
     beta = 10 * math.pi / 180
-    draw_star(ax, M1, 0.3)
     M2 = [[math.cos(beta), - math.sin(beta), 0],
           [math.sin(beta), math.cos(beta), 0],
           [0, 0, 1]]
+    fig, ax = create_plot_with_grid()
+    draw_star(ax, np.identity(3), 0.15)
+    draw_star(ax, M1, 0.3)
     draw_star(ax, np.dot(M2, M1), 1.0)
     ax.figure.savefig('./assets/Figure_5.png')
 
 def picture6():
-    fig, ax = create_plot_with_grid()
     alpha = 30 * math.pi / 180
     R = [[math.cos(alpha), - math.sin(alpha), 0],
          [math.sin(alpha), math.cos(alpha), 0],
@@ -247,12 +253,13 @@ def picture6():
     S = [[1.5, 0, 0], 
          [0, 0.5, 0],
          [0, 0, 1]]
+
+    fig, ax = create_plot_with_grid()
     draw_star(ax, R, 0.2)
     draw_star(ax, np.dot(S, R), 1.0)
     ax.figure.savefig('./assets/Figure_6.png')
 
 def picture7():
-    fig, ax = create_plot_with_grid()
     alpha = 30 * math.pi / 180
     R = [[math.cos(alpha), - math.sin(alpha), 0],
          [math.sin(alpha), math.cos(alpha), 0],
@@ -260,18 +267,24 @@ def picture7():
     S = [[1.5, 0, 0], 
          [0, 0.5, 0],
          [0, 0, 1]]
+
+    fig, ax = create_plot_with_grid()
     draw_star(ax, S, 0.2)
     draw_star(ax, np.dot(R, S), 1.0)
     ax.figure.savefig('./assets/Figure_7.png')
 
 def picture8():
-    fig, ax = create_plot_with_grid_3d()
-
     o = [0, 0, 0]
     v_a = [2, 0, 1]
     v_b = [1.5, 1, -0.5]
     v_c = crossProduct(v_a, v_b)
     v_d = [a + b for a, b in zip(v_a, v_b)]
+
+    nv_a = normalized(v_a)
+    nv_b = normalized(v_b)
+    nv_c = normalized(v_c)
+
+    fig, ax = create_plot_with_grid_3d()
     ax.add_artist(Arrow3D(0, 0, 0, *v_a, mutation_scale=20,
                   arrowstyle="-|>", fc='r', ec='r'))
     ax.add_artist(Arrow3D(0, 0, 0, *v_b, mutation_scale=20,
@@ -280,8 +293,10 @@ def picture8():
                   fc='b', ec='b'))
     ax.plot(*[[a, b] for a, b in zip(v_a, v_d)], linestyle='--', c="gray")
     ax.plot(*[[a, b] for a, b in zip(v_b, v_d)], linestyle='--', c="gray")
+    ax.plot(*[[a, b] for a, b in zip(np.multiply(nv_a, 0.3), np.multiply(nv_c, 0.3))], linestyle='--', c="gray")
 
-    tri = Poly3DCollection([o, v_a, v_d, o, v_d, v_b], color='gray', linewidths=0, alpha=0.3)
+    verts = [o, v_a, v_d]
+    tri = Poly3DCollection(verts, color='gray', linewidths=0, alpha=0.3)
     ax.add_collection3d(tri)
 
     ax.scatter(*list(zip(o, v_a, v_b, v_d)),
@@ -323,13 +338,44 @@ def picture8():
     ax.figure.savefig('./assets/Figure_8.png')
 
 
-picture1()
-picture2()
-picture3()
-picture4()
-picture5()
-picture6()
-picture7()
+def picture9():
+    v = np.array([-0.4, 0.2, 0.6])
+    n = np.array(normalized((1, 1, 3)))
+    angle = 130 * (math.pi / 180)
+
+    dz = np.array(n) * dotProduct(n, v)
+    dx = v - dz
+    dy = np.array(crossProduct(n, dx))
+    v_dx_dy = dx * math.cos(angle) + dy * math.sin(angle)
+    v_ = v_dx_dy + dz
+
+    fig, ax = create_plot_with_grid_3d()
+    ax.set_xlim(-1, 1)
+    ax.set_ylim(-1, 1)
+    ax.set_zlim(0, 1)
+    ax.add_artist(Arrow3D(0, 0, 0, *list(v), mutation_scale=15, fc='r', ec='r'))
+    ax.add_artist(Arrow3D(0, 0, 0, *list(n), mutation_scale=20, arrowstyle="-|>", fc='b', ec='b'))
+    ax.add_artist(Arrow3D(0, 0, 0, *list(v_), mutation_scale=15, fc='g', ec='g'))
+    ax.add_artist(Arrow3D(0, 0, 0, *list(dx), mutation_scale=20, arrowstyle="->", fc='r', ec='r'))
+    ax.add_artist(Arrow3D(0, 0, 0, *list(dy), mutation_scale=20, arrowstyle="->", fc='y', ec='y'))
+    ax.add_artist(Arrow3D(0, 0, 0, *list(dz), mutation_scale=20, arrowstyle="->", fc='r', ec='g'))
+    ax.add_artist(Arrow3D(0, 0, 0, *list(v_dx_dy), mutation_scale=20, arrowstyle="-|>", fc='g', ec='g'))
+
+
+
+
+
+
+
+
+#picture1()
+#picture2()
+#picture3()
+#picture4()
+#picture5()
+#picture6()
+#picture7()
 picture8()
-#plt.show()
+#picture9()
+plt.show()
 sys.exit()
