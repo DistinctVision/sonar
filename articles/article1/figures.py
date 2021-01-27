@@ -88,6 +88,7 @@ def get_rotation_matrix(angles: tuple):
 
 def create_plot_with_grid():
     fig, ax = plt.subplots(figsize=(5, 5))
+    ax = fig.add_axes([0.06, 0.06, 0.88, 0.88])
     ax.set_xlim(-10, 10)
     ax.set_ylim(-10, 10)
     ax.minorticks_on()
@@ -102,19 +103,19 @@ def create_plot_with_grid():
 
     ax.grid(which='major', color='#555555', linewidth=2.0)
     ax.grid(which='minor', color='#CCCCCC')
-
     return fig, ax
 
 def create_plot_with_grid_3d():
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(111, projection='3d')
+    ax.margins(0.05)
     ax.set_xlim(-1, 4)
     ax.set_ylim(-1, 4)
     ax.set_zlim(-1, 4)
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
-    major_ticks = [-1, 4]
+    major_ticks = [-1, 0, 4]
     minor_ticks = [x for x in range(-1, 4)]
     ax.set_xticks(major_ticks, minor=False)
     ax.set_yticks(major_ticks, minor=False)
