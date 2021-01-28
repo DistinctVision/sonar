@@ -255,6 +255,7 @@ def picture6():
          [0, 0, 1]]
 
     fig, ax = create_plot_with_grid()
+    draw_star(ax, np.identity(3), 0.075)
     draw_star(ax, R, 0.2)
     draw_star(ax, np.dot(S, R), 1.0)
     ax.figure.savefig('./assets/Figure_6.png')
@@ -269,6 +270,7 @@ def picture7():
          [0, 0, 1]]
 
     fig, ax = create_plot_with_grid()
+    draw_star(ax, np.identity(3), 0.075)
     draw_star(ax, S, 0.2)
     draw_star(ax, np.dot(R, S), 1.0)
     ax.figure.savefig('./assets/Figure_7.png')
@@ -437,6 +439,25 @@ def picture9():
     ax.view_init(elev=50, azim=-130)
     ax.figure.savefig('./assets/Figure_9.png')
 
+def picture10():
+    alpha = 30 * math.pi / 180
+    R = [[math.cos(alpha), - math.sin(alpha), 0],
+         [math.sin(alpha), math.cos(alpha), 0],
+         [0, 0, 1]]
+    S = [[0.5, 0, 0], 
+         [0, 0.5, 0],
+         [0, 0, 1]]
+    T = [[1, 0, 6],
+         [0, 1, 4],
+         [0, 0, 1]]
+
+    fig, ax = create_plot_with_grid()
+    draw_star(ax, np.identity(3), 0.075)
+    draw_star(ax, S, 0.2)
+    draw_star(ax, np.dot(R, S), 0.4)
+    draw_star(ax, np.dot(T, np.dot(R, S)), 1.0)
+    ax.figure.savefig('./assets/Figure_10.png')
+
 picture1()
 picture2()
 picture3()
@@ -446,5 +467,6 @@ picture6()
 picture7()
 picture8()
 picture9()
+picture10()
 #plt.show()
 sys.exit()
