@@ -309,15 +309,15 @@ def picture8():
                     s=20,
                     marker='o',
                     color='black')
-    ax.add_artist(Annotation3D('A', o, 
+    ax.add_artist(Annotation3D('O', o, 
                     xytext=(0, 20),
                     textcoords='offset points',
                     bbox=dict(boxstyle="round", fc="lightyellow")))
-    ax.add_artist(Annotation3D('B', v_a, 
+    ax.add_artist(Annotation3D('A', v_a, 
                     xytext=(0, 10),
                     textcoords='offset points',
                     bbox=dict(boxstyle="round", fc="lightyellow")))
-    ax.add_artist(Annotation3D('C', v_b, 
+    ax.add_artist(Annotation3D('B', v_b, 
                     xytext=(0, 15),
                     textcoords='offset points',
                     bbox=dict(boxstyle="round", fc="lightyellow")))
