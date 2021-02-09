@@ -27,9 +27,6 @@ CONFIG(debug, debug|release) {
     OBJECTS_DIR = release/obj
 }
 
-INCLUDEPATH += $$PWD/include
-DEPENDPATH += $$PWD/include
-
 windows  {
     QMAKE_CXXFLAGS += /bigobj
 }
@@ -38,8 +35,8 @@ linux {
     QMAKE_CXXFLAGS += -Wno-unused-function
 }
 
-include (external/external_libs.pri)
+INCLUDEPATH += $$PWD/src/
 
-include (include/sonar/include.pri)
-include (src/src.pri)
+include (external/external_libs.pri)
+include (src/sonar/sonar.pri)
 
