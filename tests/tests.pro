@@ -1,11 +1,14 @@
-QT += qml quick widgets
+#QT += qml quick widgets
+
+CONFIG += console
+
+CONFIG -= app_bundle
+CONFIG -= qt
 
 TARGET = tests
 
 CONFIG += c++17
 VERSION = 0.1
-
-CONFIG -= app_bundle
 
 CONFIG(debug, debug|release) {
     MOC_DIR = debug/moc
@@ -46,9 +49,13 @@ include (../lib/external/opencv.pri)
 INCLUDEPATH += $$PWD/../lib/include
 DEPENDPATH += $$PWD/../lib/include
 
+INCLUDEPATH += $$PWD/../lib/src
+
 SOURCES += \
-    main.cpp
+    main.cpp \
+    test_marker_transform.cpp
 
 HEADERS += \
+    test_marker_transform.h
 
 DEFINES += _USE_MATH_DEFINES

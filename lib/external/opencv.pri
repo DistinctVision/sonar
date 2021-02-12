@@ -24,10 +24,12 @@ windows {
                 -lopencv_core$$OPENCV_VERSION \
                 -lopencv_imgproc$$OPENCV_VERSION \
                 -lopencv_video$$OPENCV_VERSION \
+                -lopencv_videoio$$OPENCV_VERSION \
                 -lopencv_highgui$$OPENCV_VERSION \
                 -lopencv_imgcodecs$$OPENCV_VERSION \
                 #-lopencv_calib3d$$OPENCV_VERSION \
-                -lopencv_flann$$OPENCV_VERSION
+                -lopencv_flann$$OPENCV_VERSION \
+                -lopencv_aruco$$OPENCV_VERSION
         }
     }
 } else: unix {

@@ -21,8 +21,8 @@
 #include <Eigen/SVD>
 #include <Eigen/Geometry>
 
-#include <sonar/General/Point2.h>
-#include <sonar/General/cast.h>
+#include "sonar/General/cast.h"
+#include "sonar/General/Point2.h"
 
 namespace sonar {
 

@@ -1,17 +1,13 @@
-#include <QGuiApplication>
+#include "test_marker_transform.h"
 
-#include <QtQuick/QQuickView>
-
-#include <cassert>
-#include <random>
-#include <chrono>
-#include <iostream>
-#include <cstdlib>
+#include "sonar/global_types.h"
 
 int main(int argc, char ** argv)
 {
-    QGuiApplication app(argc, argv);
+    SONAR_UNUSED(argc);
+    SONAR_UNUSED(argv);
 
-    //return app.exec();
+    test_marker_transform(true);
+
     return 0;
 }
