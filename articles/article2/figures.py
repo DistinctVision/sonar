@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import numpy as np
 import itertools
 import sys
@@ -25,29 +26,31 @@ def get_rotation_matrix(angles: tuple):
                      [sin_b * sin_c, sin_b * cos_c, cos_b]])
 
 def create_plot_with_grid_3d():
-    fig = plt.figure(figsize=(8, 8))
+    fig = plt.figure(figsize=(4, 4))
     ax = fig.add_subplot(111, projection='3d')
     ax.margins(0.05)
-    ax.set_xlim(-4, 4)
-    ax.set_ylim(-4, 4)
-    ax.set_zlim(-4, 4)
+    ax.set_xlim(-2, 2)
+    ax.set_ylim(0, 4)
+    ax.set_zlim(-1, 3)
     ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    ax.set_zlabel('Z')
-    major_ticks = [-4, 0, 4]
-    minor_ticks = [x for x in range(-4, 4)]
-    ax.set_xticks(major_ticks, minor=False)
-    ax.set_yticks(major_ticks, minor=False)
-    ax.set_zticks(major_ticks, minor=False)
-    ax.set_xticks(minor_ticks, minor=True)
-    ax.set_yticks(minor_ticks, minor=True)
-    ax.set_zticks(minor_ticks, minor=True)
+    ax.set_ylabel('Z')
+    ax.set_zlabel('Y')
+    ax.set_xticks([-2, 0, 2], minor=False)
+    ax.set_yticks([0, 2, 4], minor=False)
+    ax.set_zticks([-1, 1, 3], minor=False)
+    ax.set_xticks([x for x in range(-2, 2)], minor=True)
+    ax.set_yticks([x for x in range(0, 4)], minor=True)
+    ax.set_zticks([x for x in range(-1, 3)], minor=True)
 
     return fig, ax
 
 
+def draw_line(ax, p_a, p_b, *args, **kwargs):
+    ax.plot(*[[a, b] for a, b in zip(p_a, p_b)], *args, **kwargs)
+
+
 def figure1():
-    fig, ax = plt.subplots(figsize=(5, 5))
+    fig, ax = plt.subplots(figsize=(6, 6))
     ax.set_xlim(-5, 5)
     ax.set_ylim(-5, 5)
     #ax.get_xaxis().set_visible(False)
@@ -77,7 +80,11 @@ def figure1():
 
 
 def figure2():
+    def swap_zy(v):
+        return [v[0], v[2], v[1]]
+
     fig, ax = create_plot_with_grid_3d()
+    ax.axis("off")
 
     cube_vertices = np.array([[-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
                               [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]])
@@ -85,7 +92,7 @@ def figure2():
                   (4, 5), (5, 6), (6, 7), (7, 4),
                   (0, 4), (1, 5), (2, 6), (3, 7)]
     R = get_rotation_matrix((0, 30 * (math.pi / 180), 10 * (math.pi / 180)))
-    t = np.array([0, 0, 5])
+    t = np.array([0, 0, 3])
 
     K = np.array([[1, 0, 0], 
                   [0, 1, 0],
@@ -94,10 +101,32 @@ def figure2():
     world_cube_vertices = [np.dot(R, v) + t for v in cube_vertices]
     projected_points = [v / v[2] for v in world_cube_vertices]
 
-    for e_a, e_b in cube_edges:
-        ax.plot(*[[a, b] for a, b in zip(world_cube_vertices[e_a], world_cube_vertices[e_b])], linestyle='-', c="black", zorder=0)
+    world_cube_vertices = [swap_zy(v) for v in world_cube_vertices]
+    projected_points = [swap_zy(v) for v in projected_points]
 
-    ax.figure.savefig('./assets/Figure_2.png')
+    # draw cube edges
+    for e_a, e_b in cube_edges:
+        draw_line(ax, world_cube_vertices[e_a], world_cube_vertices[e_b], linestyle='-', c="black", zorder=1, linewidth=1.0)
+
+    # draw projection rays
+    for world_vertex, projected_vertex in zip(world_cube_vertices, projected_points):
+        draw_line(ax, world_vertex, projected_vertex, linestyle='--', c="gray", zorder=0, linewidth=0.4)
+
+    # draw cube edges on projection
+    for e_a, e_b in cube_edges:
+        draw_line(ax, projected_points[e_a], projected_points[e_b], linestyle='-', c="gray", zorder=1, linewidth=0.5)
+
+    # draw rays to center of projection
+    for projected_vertex in projected_points:
+        draw_line(ax, (0, 0, 0), projected_vertex, linestyle=':', c="gray", zorder=-1, linewidth=0.4)
+
+    plane_tri = [(-2, -2, 1), (2, -2, 1), (-2, 2, 1), (2, -2, 1), (2, 2, 1), (-2, 2, 1)]
+    plane_tri = [swap_zy(v) for v in plane_tri]
+    tri = Poly3DCollection(plane_tri, color='gray', linewidths=0, alpha=0.3)
+    ax.add_collection3d(tri)
+
+    ax.view_init(elev=12., azim=20.)
+    ax.figure.savefig('./assets/Figure_2.png', transparent = False, bbox_inches = 'tight', pad_inches = 0)
 
 
 figure1()
