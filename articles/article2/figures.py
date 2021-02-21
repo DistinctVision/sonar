@@ -4,6 +4,7 @@ import numpy as np
 import itertools
 import sys
 import math
+from matplotlib.patches import Arc
 
 def project(v: list or np.array):
     if math.fabs(v[-1]) < 1e-3:
@@ -129,7 +130,81 @@ def figure2():
     ax.figure.savefig('./assets/Figure_2.png', transparent = False, bbox_inches = 'tight', pad_inches = 0)
 
 
+def figure3():
+    fig, ax = plt.subplots(figsize=(4, 3))
+    w, h = 640, 480
+    ax.axis('off')
+
+    image_cornres = np.array([(0, 0), (w, 0), (w, h), [0, h]])
+    ax.scatter(image_cornres[:, 0], image_cornres[:, 1], 20, color='gray')
+    image_cornres = np.append(image_cornres, image_cornres[0:1], axis=0)
+    ax.plot(image_cornres[:, 0], image_cornres[:, 1], linestyle="-", color="gray", linewidth=1.0)
+    image_corner_names = [r"$(0, height)^T$", r"$(width, height)^T$", r"$(width, 0)^T$", r"$(0, 0)^T$"]
+    for point, point_name in zip(image_cornres, image_corner_names):
+        ax.annotate(point_name, xy=point, xycoords='data', xytext=(-30, 10 if point[1] > 0 else -20), textcoords='offset points', fontsize=10)
+    ax.scatter([w / 2], [h / 2], 20, color='gray')    
+    ax.annotate(r"$(\frac{width}{2}, \frac{height}{2})^T$", xy=(w / 2, h / 2), xycoords='data', xytext=(-30, 10), textcoords='offset points', fontsize=12)
+    ax.figure.savefig('./assets/Figure_3.png', transparent = False, bbox_inches = 'tight', pad_inches = 0)
+
+
+def figure4():
+    fig, ax = plt.subplots(figsize=(4, 4))
+    ax.axis("on")
+    ax.set_xlabel('X')
+    ax.set_ylabel('Z')
+    ax.set_xlim(-1, 1)
+    ax.set_ylim(-0.5, 1.5)
+    ax.minorticks_on()
+
+    ax.set_xticks([0], minor=False)
+    ax.set_xticks([x for x in range(-1, 2)], minor=True)
+    ax.set_yticks([0, 1], minor=False)
+    ax.set_yticks([x for x in range(0, 1)], minor=True)
+
+    ax.grid(which='major', color='#999999', linewidth=1.0)
+    ax.grid(which='minor', color='#CCCCCC', linewidth=0.5)
+
+    ax.plot([-2, 2], [1, 1], linestyle="-", color="black", linewidth=2.0)
+    ax.plot([-2, 0, 2], [3, 0, 3], linestyle="--", color="black", linewidth=1.0)
+    ax.figure.savefig('./assets/Figure_4.png', transparent = False, bbox_inches = 'tight', pad_inches = 0)
+
+    a, c = (2 / 3, 1), (- 2 / 3, 1)
+    ax.scatter([0, a[0], 0, c[0]], [0, a[1], 1, c[1]], 20, color='gray', zorder=100)
+    ax.annotate("A", xy=a, xycoords='data', xytext=(-6, 10), textcoords='offset points', fontsize=16)
+    ax.annotate("C", xy=c, xycoords='data', xytext=(-6, 10), textcoords='offset points', fontsize=16)
+    ax.annotate("B", xy=(0, 1), xycoords='data', xytext=(-6, 10), textcoords='offset points', fontsize=16)
+    ax.annotate("O", xy=(0, 0), xycoords='data', xytext=(-6, 10), textcoords='offset points', fontsize=16)
+    half_horizontal_angle = math.atan2(a[0], 1) * (180 / math.pi)
+    ax.add_artist(Arc((0, 0), 1.5, 1.5, 0.0, 90 - half_horizontal_angle, 90 + half_horizontal_angle))
+    ax.add_artist(Arc((0, 0), 1.45, 1.45, 0.0, 90 - half_horizontal_angle, 90 + half_horizontal_angle))
+    ax.add_artist(Arc((0, 0), 0.75, 0.75, 0.0, 90 - half_horizontal_angle, 90))
+    ax.add_artist(Arc((0, 0), 0.5, 0.5, 0.0, 90, 90 + half_horizontal_angle))
+    ax.annotate(r"$angle_x$", xy=(0, 0.75), xycoords='data', xytext=(-16, 10), textcoords='offset points', fontsize=12)
+    ax.annotate(r"$\frac{angle_x}{2}$", xy=(0.1, 0.3), xycoords='data', xytext=(-8, 10), textcoords='offset points', fontsize=12)
+    ax.figure.savefig('./assets/Figure_4.png', transparent = False, pad_inches = 0)
+
+
+def figure5():
+    fig, ax = plt.subplots(figsize=(4, 3))
+    w, h = 640, 480
+    ax.axis('off')
+
+    image_cornres = np.array([(- w / 2, - h / 2), (w / 2, - h / 2), (w / 2, h / 2), [- w / 2, h / 2]])
+    ax.scatter(image_cornres[:, 0], image_cornres[:, 1], 20, color='gray')
+    image_cornres = np.append(image_cornres, image_cornres[0:1], axis=0)
+    ax.plot(image_cornres[:, 0], image_cornres[:, 1], linestyle="-", color="gray", linewidth=1.0)
+    image_corner_names = [r"$(- \frac{width}{2}, - \frac{height}{2})^T$", r"$(\frac{width}{2}, \frac{height}{2})^T$", r"$(\frac{width}{2}, - \frac{height}{2})^T$", r"$(- \frac{width}{2}, - \frac{height}{2})^T$"]
+    for point, point_name in zip(image_cornres, image_corner_names):
+        ax.annotate(point_name, xy=point, xycoords='data', xytext=(-30, 10 if point[1] > 0 else -20), textcoords='offset points', fontsize=10)
+    ax.scatter([0], [0], 20, color='gray')    
+    ax.annotate(r"$(0, 0)^T$", xy=(0, 0), xycoords='data', xytext=(-15, 10), textcoords='offset points', fontsize=12)
+    ax.figure.savefig('./assets/Figure_5.png', transparent = False, bbox_inches = 'tight', pad_inches = 0)
+
+
 figure1()
 figure2()
-plt.show()
+figure3()
+figure4()
+figure5()
+#plt.show()
 sys.exit()
