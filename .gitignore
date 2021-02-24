@@ -32,3 +32,5 @@
 *.app
 articles/.vscode/settings.json
 *.user
+
+lib/build/*
