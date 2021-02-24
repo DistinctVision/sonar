@@ -23,6 +23,16 @@
 
 namespace sonar {
 
+class Uncopyable
+{
+public:
+    Uncopyable() = default;
+
+private:
+    Uncopyable(const Uncopyable &) = delete ;
+    Uncopyable & operator = (const Uncopyable &) = delete;
+};
+
 #if defined(OPENGV_LIB)
 using point_t = opengv::point_t;
 using points_t = opengv::points_t;
@@ -55,7 +65,7 @@ using Matrices3f = std::vector<Eigen::Matrix3f, Eigen::aligned_allocator<Eigen::
 using Matrices3d = std::vector<Eigen::Matrix3d, Eigen::aligned_allocator<Eigen::Matrix3d>>;
 
 template <typename Type>
-struct CameraPose
+struct Pose
 {
     Eigen::Matrix<Type, 3, 3> R = Eigen::Matrix<Type, 3, 3>::Identity();
     Eigen::Matrix<Type, 3, 1> t = Eigen::Matrix<Type, 3, 1>::Zero();
@@ -85,44 +95,34 @@ struct CameraPose
         return this->R * v + this->t;
     }
 
-    CameraPose<Type> transform(const CameraPose<Type> & pose) const
+    Pose<Type> transform(const Pose<Type> & pose) const
     {
-        CameraPose<Type> localPose;
+        Pose<Type> localPose;
         localPose.R = this->R * pose.R;
         localPose.t = this->R * pose.t + this->t;
         return localPose;
     }
 
-    CameraPose<Type> inverse() const
+    Pose<Type> inverse() const
     {
-        CameraPose<Type> invPose;
+        Pose<Type> invPose;
         invPose.R = this->R.inverse();
         invPose.t = - invPose.R * this->t;
         return invPose;
     }
 
     template <typename CastType>
-    CameraPose<CastType> cast() const
+    Pose<CastType> cast() const
     {
-        CameraPose<CastType> castPose;
+        Pose<CastType> castPose;
         castPose.R = this->R.template cast<CastType>();
         castPose.t = this->t.template cast<CastType>();
         return castPose;
     }
 };
 
-using CameraPose_f = CameraPose<float>;
-using CameraPose_d = CameraPose<double>;
-
-class Uncopyable
-{
-public:
-    Uncopyable() = default;
-
-private:
-    Uncopyable(const Uncopyable &) = delete ;
-    Uncopyable & operator = (const Uncopyable &) = delete;
-};
+using Pose_f = Pose<float>;
+using Pose_d = Pose<double>;
 
 } // namespace sonar
 

@@ -36,7 +36,16 @@ windows {
     INCLUDEPATH += /usr/local/include/opencv4
     DEPENDPATH += /usr/local/include/opencv4
 
-    LIBS += -L/usr/local/lib -lopencv_world
+    LIBS += -L/usr/local/lib \
+        -lopencv_core \
+        -lopencv_imgproc \
+        -lopencv_video \
+        -lopencv_videoio \
+        -lopencv_highgui \
+        -lopencv_imgcodecs \
+        #-lopencv_calib3d \
+        -lopencv_flann \
+        -lopencv_aruco
 } else {
     error("OpenCV not included")
 }

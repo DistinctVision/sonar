@@ -1,0 +1,7 @@
+/home/alex/develop/sonar/lib/build/CMakeFiles/install/strip.dir
+/home/alex/develop/sonar/lib/build/CMakeFiles/edit_cache.dir
+/home/alex/develop/sonar/lib/build/CMakeFiles/sonar.dir
+/home/alex/develop/sonar/lib/build/CMakeFiles/rebuild_cache.dir
+/home/alex/develop/sonar/lib/build/CMakeFiles/list_install_components.dir
+/home/alex/develop/sonar/lib/build/CMakeFiles/install/local.dir
+/home/alex/develop/sonar/lib/build/CMakeFiles/install.dir

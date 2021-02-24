@@ -15,10 +15,26 @@ using namespace Eigen;
 namespace sonar {
 
 MarkerFinder::MarkerFinder(MarkerFinder::MarkersDictionaryType markersType):
+    m_targetMarkerId(-1),
     m_lastMarkerId(-1)
 {
     m_dictionary = cv::aruco::getPredefinedDictionary(static_cast<int>(markersType));
     m_detectorParameters = cv::aruco::DetectorParameters::create();
+}
+
+int MarkerFinder::lastMarkerId() const
+{
+    return m_lastMarkerId;
+}
+
+int MarkerFinder::targetMarkerId() const
+{
+    return m_targetMarkerId;
+}
+
+void MarkerFinder::setTargetMarkerId(int targetMarkerId)
+{
+    m_targetMarkerId = targetMarkerId;
 }
 
 void MarkerFinder::reset()
@@ -26,7 +42,7 @@ void MarkerFinder::reset()
     m_lastMarkerId = -1;
 }
 
-vector<Point2f> MarkerFinder::findMarker(const ImageRef<uchar> & grayImage, int markerId)
+vector<Point2f> MarkerFinder::findMarker(const ImageRef<uchar> & grayImage)
 {
     vector<int> markersIds;
     vector<vector<cv::Point2f>> markerCorners;
@@ -38,9 +54,9 @@ vector<Point2f> MarkerFinder::findMarker(const ImageRef<uchar> & grayImage, int 
         return {};
 
     int currentMarkerIndex = -1;
-    if (markerId >= 0)
+    if (m_targetMarkerId >= 0)
     {
-        auto itMarker = find(markersIds.begin(), markersIds.end(), markerId);
+        auto itMarker = find(markersIds.begin(), markersIds.end(), m_targetMarkerId);
         if (itMarker != markersIds.end())
             currentMarkerIndex = cast<int>(itMarker - markersIds.begin());
     }
@@ -63,9 +79,9 @@ vector<Point2f> MarkerFinder::findMarker(const ImageRef<uchar> & grayImage, int 
     return cv_cast<float>(markerCorners[cast<size_t>(currentMarkerIndex)]);
 }
 
-tuple<Matrix3f, bool> MarkerFinder::findAffineTransformOfMarker(const ImageRef<uchar> & grayImage, int markerId)
+tuple<Matrix3f, bool> MarkerFinder::findAffineTransformOfMarker(const ImageRef<uchar> & grayImage)
 {
-    vector<Point2f> markerCorners = findMarker(grayImage, markerId);
+    vector<Point2f> markerCorners = findMarker(grayImage);
     if (markerCorners.empty())
         return make_tuple(Matrix3f::Identity(), false);
 
@@ -145,6 +161,25 @@ Matrix3f MarkerFinder::computeHomographyTransformOfMarker(const vector<Point2f> 
          h(6), h(7), h(8);
 
     return H.cast<float>();
+}
+
+tuple<bool, Pose_f> MarkerFinder::findPose(const ImageRef<uchar> & grayImage, const Matrix3f & K)
+{
+    vector<Point2f> markerCorners = findMarker(grayImage);
+    if (markerCorners.empty())
+        return make_tuple(false, Pose_f());
+    Matrix3f H = computeHomographyTransformOfMarker(markerCorners);
+    Matrix3f Rt = K.inverse() * H;
+    float scale = (Rt.col(0).norm() + Rt.col(1).norm()) * 0.5f;
+    Vector3f r0 = Rt.col(0).normalized();
+    Vector3f r1 = Rt.col(1).normalized();
+    Vector3f r2 = r0.cross(r1);
+    Pose_f pose;
+    pose.R.col(0) = Rt.col(0).normalized();
+    pose.R.col(1) = Rt.col(1).normalized();
+    pose.R.col(2) = pose.R.col(0).cross(pose.R.col(1)).normalized();
+    pose.t = Rt.col(2) / scale;
+    return make_tuple(true, pose);
 }
 
 } // namespace sonar

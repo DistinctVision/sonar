@@ -11,6 +11,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/aruco.hpp>
 
+#include "global_types.h"
 #include "sonar/General/Point2.h"
 #include "sonar/General/Image.h"
 
@@ -29,37 +30,54 @@ public:
 
     MarkerFinder(MarkersDictionaryType markersType);
 
+    /// Get target marker id
+    /// @return -1 for any markers and value >= 0 if filter by id is used
+    int targetMarkerId() const;
+
+    /// Set target marker id, and we will find marker with only this id
+    /// @param targetMarkerId - -1 if we can find any markers or id >= 0 for finding marker only with this id
+    void setTargetMarkerId(int targetMarkerId);
+
+    /// Get last marker id
+    /// @return -1 - if marker is not found else value >= 0
+    int lastMarkerId() const;
+
     /// Reset last markerid (this is for stable finding marker if we found many markers)
     void reset();
 
     /// Do finding of marker
     /// @param grayImage - input image for search
-    /// @param markerId - find marker only with this id
     /// @return coordinates of marker corners or empty vector if marker is not found
-    std::vector<Point2f> findMarker(const ImageRef<uchar> & grayImage, int markerId = -1);
+    std::vector<Point2f> findMarker(const ImageRef<uchar> & grayImage);
 
     /// Get affine transform of marker (just test fnction).
     /// @param markerCorners - image coordinates of marker corners.
     /// @return aproximated affine matrix
+    [[deprecated]]
     Eigen::Matrix3f computeAffineTransformOfMarker(const std::vector<Point2f> & imageMarkerCorners) const;
 
     /// Do finding of marker and get affine transform (just test fnction).
     /// @param grayImage - input image for search
-    /// @param markerId - find marker only with this id
     /// @return tuple - aproximated affine matrix and True if marker is founded else identity matrix and False
-    std::tuple<Eigen::Matrix3f, bool> findAffineTransformOfMarker(const ImageRef<uchar> & grayImage, int markerId = -1);
+    /// @return aproximated affine matrix
+    [[deprecated]]
+    std::tuple<Eigen::Matrix3f, bool> findAffineTransformOfMarker(const ImageRef<uchar> & grayImage);
 
     /// Get homography transform of marker.
     /// @param markerCorners - image coordinates of marker corners.
     /// @return homography matrix
+    /// @return aproximated affine matrix
+    [[deprecated]]
     Eigen::Matrix3f computeHomographyTransformOfMarker(const std::vector<Point2f> & imageMarkerCorners) const;
+
+    std::tuple<bool, Pose_f> findPose(const ImageRef<uchar> & grayImage, const Eigen::Matrix3f & K);
 
 private:
     cv::Ptr<cv::aruco::Dictionary> m_dictionary;
     cv::Ptr<cv::aruco::DetectorParameters> m_detectorParameters;
 
+    int m_targetMarkerId;
     int m_lastMarkerId;
-
 };
 
 } // namespace sonar

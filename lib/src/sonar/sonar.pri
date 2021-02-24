@@ -2,6 +2,7 @@ include (General/General.pri)
 include (DebugTools/DebugTools.pri)
 include (ImageTools/ImageTools.pri)
 include (CameraTools/CameraTools.pri)
+include (ThreadsTools/ThreadsTools.pri)
 
 HEADERS += \
     $$PWD/MarkerFinder.h \

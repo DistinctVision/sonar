@@ -1,0 +1,16 @@
+add_definitions(-DMODULE_THREADS_TOOLS)
+
+set(SONAR_SOURCES_FILES
+    ${SONAR_SOURCES_FILES}
+    ${CMAKE_CURRENT_LIST_DIR}/Worker.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/WorkerPool.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/Semaphore.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ReadWriteMutex.cpp)
+
+set(SONAR_HEADER_FILES
+    ${SONAR_HEADER_FILES}
+    ${CMAKE_CURRENT_LIST_DIR}/SyncFuture.h
+    ${CMAKE_CURRENT_LIST_DIR}/Worker.h
+    ${CMAKE_CURRENT_LIST_DIR}/WorkerPool.h
+    ${CMAKE_CURRENT_LIST_DIR}/Semaphore.h
+    ${CMAKE_CURRENT_LIST_DIR}/ReadWriteMutex.h)

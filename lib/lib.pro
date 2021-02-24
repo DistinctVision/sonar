@@ -1,7 +1,7 @@
 TARGET = sonar
 TEMPLATE = lib
 
-CONFIG += c++11
+CONFIG += c++17
 
 CONFIG -= app_bundle
 CONFIG -= qt
