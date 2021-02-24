@@ -175,9 +175,9 @@ tuple<bool, Pose_f> MarkerFinder::findPose(const ImageRef<uchar> & grayImage, co
     Vector3f r1 = Rt.col(1).normalized();
     Vector3f r2 = r0.cross(r1);
     Pose_f pose;
-    pose.R.col(0) = Rt.col(0).normalized();
-    pose.R.col(1) = Rt.col(1).normalized();
-    pose.R.col(2) = pose.R.col(0).cross(pose.R.col(1)).normalized();
+    pose.R.col(0) = r0;
+    pose.R.col(1) = r1;
+    pose.R.col(2) = r2;
     pose.t = Rt.col(2) / scale;
     return make_tuple(true, pose);
 }
