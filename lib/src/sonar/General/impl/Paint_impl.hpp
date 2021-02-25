@@ -151,7 +151,7 @@ void drawCross(const Image<Type> & image, const Point2f & p, float len, const Ty
 }
 
 template <typename Type>
-void drawImage(const Image<Type> & canvasImage, const ImageRef<Type> & image, const Point2f & pos, const Point2f & size)
+void drawImage(const Image<Type> & canvasImage, const ImageRef<Type> & image, const Point2f & pos, const Size2f & size)
 {
     assert((image.width() > 0) && (image.height() > 0));
     assert((size.x > 0.0005f) && (size.y > 0.0005f));

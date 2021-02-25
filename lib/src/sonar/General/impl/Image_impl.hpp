@@ -233,7 +233,7 @@ int ImageRef<Type>::countBytes() const
 }
 
 template < typename Type >
-Point2i ImageRef<Type>::size() const
+Size2i ImageRef<Type>::size() const
 {
     return this->m_size;
 }
@@ -411,7 +411,7 @@ void ImageRef<Type>::_moveRef(ImageRef<Type> && image)
 }
 
 template < typename Type >
-void ImageRef<Type>::_copyRef(const ImageRef<Type> & image, const Point2i & offset, const Point2i & size)
+void ImageRef<Type>::_copyRef(const ImageRef<Type> & image, const Point2i & offset, const Size2i & size)
 {
     assert((offset.x >= 0) && (offset.y >= 0));
     assert((image.m_size.x >= (offset.x + size.x)) && (image.m_size.y >= (offset.y + size.y)));
@@ -433,7 +433,7 @@ void ImageRef<Type>::_copyRef(const ImageRef<Type> & image, const Point2i & offs
 }
 
 template < typename Type >
-void ImageRef<Type>::_moveRef(ImageRef<Type> && image, const Point2i & offset, const Point2i & size)
+void ImageRef<Type>::_moveRef(ImageRef<Type> && image, const Point2i & offset, const Size2i & size)
 {
     assert((offset.x >= 0) && (offset.y >= 0));
     assert((image.m_size.x >= (offset.x + size.x)) && (image.m_size.y >= (offset.y + size.y)));
@@ -486,19 +486,19 @@ ConstImage<Type>::ConstImage(ImageRef<Type> && image)
 }
 
 template < typename Type >
-ConstImage<Type>::ConstImage(const ImageRef<Type> & image, const Point2i & offset, const Point2i & size)
+ConstImage<Type>::ConstImage(const ImageRef<Type> & image, const Point2i & offset, const Size2i & size)
 {
     this->_copyRef(image, offset, size);
 }
 
 template < typename Type >
-ConstImage<Type>::ConstImage(ImageRef<Type> && image, const Point2i & offset, const Point2i & size)
+ConstImage<Type>::ConstImage(ImageRef<Type> && image, const Point2i & offset, const Size2i & size)
 {
     this->_moveRef(std::move(image), offset, size);
 }
 
 template < typename Type >
-ConstImage<Type>::ConstImage(const Point2i & size, const Type * data, bool autoDeleting)
+ConstImage<Type>::ConstImage(const Size2i & size, const Type * data, bool autoDeleting)
 {
     this->m_size = size;
     this->m_widthStep = size.x;
@@ -516,7 +516,7 @@ ConstImage<Type>::ConstImage(int width, int height, const Type * data, bool auto
 }
 
 template < typename Type >
-ConstImage<Type>::ConstImage(const Point2i & size, const Type * data, int widthStep, bool autoDeleting)
+ConstImage<Type>::ConstImage(const Size2i & size, const Type * data, int widthStep, bool autoDeleting)
 {
     this->m_size = size;
     this->m_widthStep = widthStep;
@@ -607,7 +607,7 @@ Image<Type>::Image(const Image<Type> & image)
 }
 
 template <typename Type>
-Image<Type>::Image(const Image<Type> & image, const Point2i & offset, const Point2i & size)
+Image<Type>::Image(const Image<Type> & image, const Point2i & offset, const Size2i & size)
 {
     this->_copyRef(image, offset, size);
 }
@@ -619,13 +619,13 @@ Image<Type>::Image(Image<Type> && image)
 }
 
 template <typename Type>
-Image<Type>::Image(Image<Type> && image, const Point2i & offset, const Point2i & size)
+Image<Type>::Image(Image<Type> && image, const Point2i & offset, const Size2i & size)
 {
     this->_moveRef(std::move(image), offset, size);
 }
 
 template <typename Type>
-Image<Type>::Image(const Point2i & size)
+Image<Type>::Image(const Size2i & size)
 {
     this->m_size = size;
     this->m_widthStep = size.x;
@@ -643,7 +643,7 @@ Image<Type>::Image(int width, int height)
 }
 
 template <typename Type>
-Image<Type>::Image(const Point2i & size, Type * data, bool autoDeleting)
+Image<Type>::Image(const Size2i & size, Type * data, bool autoDeleting)
 {
     this->m_size = size;
     this->m_widthStep = size.x;
@@ -661,7 +661,7 @@ Image<Type>::Image(int width, int height, Type * data, bool autoDeleting)
 }
 
 template <typename Type>
-Image<Type>::Image(const Point2i & size, Type * data, int widthStep, bool autoDeleting)
+Image<Type>::Image(const Size2i & size, Type * data, int widthStep, bool autoDeleting)
 {
     this->m_size = size;
     this->m_widthStep = widthStep;

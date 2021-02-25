@@ -1,3 +1,9 @@
+/**
+* This file is part of sonar library
+* Copyright (C) 2019 Vlasov Aleksey ijonsilent53@gmail.com
+* For more information see <https://github.com/DistinctVision/sonar>
+**/
+
 #ifndef SONAR_MARKERFINDER_H
 #define SONAR_MARKERFINDER_H
 
@@ -70,7 +76,8 @@ public:
     [[deprecated]]
     Eigen::Matrix3f computeHomographyTransformOfMarker(const std::vector<Point2f> & imageMarkerCorners) const;
 
-    std::tuple<bool, Pose_f> findPose(const ImageRef<uchar> & grayImage, const Eigen::Matrix3f & K);
+    /// Get pose from pixel coordinates of marker corners
+    Pose_f getPose(const std::vector<Point2f> & imageMarkerCorners, const Eigen::Matrix3f & K);
 
 private:
     cv::Ptr<cv::aruco::Dictionary> m_dictionary;

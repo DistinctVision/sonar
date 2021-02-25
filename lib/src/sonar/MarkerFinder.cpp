@@ -163,12 +163,10 @@ Matrix3f MarkerFinder::computeHomographyTransformOfMarker(const vector<Point2f> 
     return H.cast<float>();
 }
 
-tuple<bool, Pose_f> MarkerFinder::findPose(const ImageRef<uchar> & grayImage, const Matrix3f & K)
+Pose_f MarkerFinder::getPose(const vector<Point2f> & imageMarkerCorners, const Eigen::Matrix3f & K)
 {
-    vector<Point2f> markerCorners = findMarker(grayImage);
-    if (markerCorners.empty())
-        return make_tuple(false, Pose_f());
-    Matrix3f H = computeHomographyTransformOfMarker(markerCorners);
+    assert(imageMarkerCorners.size() == 4);
+    Matrix3f H = computeHomographyTransformOfMarker(imageMarkerCorners);
     Matrix3f Rt = K.inverse() * H;
     float scale = (Rt.col(0).norm() + Rt.col(1).norm()) * 0.5f;
     Vector3f r0 = Rt.col(0).normalized();
@@ -179,7 +177,7 @@ tuple<bool, Pose_f> MarkerFinder::findPose(const ImageRef<uchar> & grayImage, co
     pose.R.col(1) = r1;
     pose.R.col(2) = r2;
     pose.t = Rt.col(2) / scale;
-    return make_tuple(true, pose);
+    return pose;
 }
 
 } // namespace sonar

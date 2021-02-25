@@ -120,7 +120,7 @@ public:
     inline const Type * pointer(const Point2i & point) const;
     inline int area() const;
     inline int countBytes() const;
-    inline Point2i size() const;
+    inline Size2i size() const;
     inline int width() const;
     inline int height() const;
     inline int widthStep() const;
@@ -153,7 +153,7 @@ private:
     Type * m_sourceData;
     Type * m_data;
     volatile std::atomic_int * m_count_references;
-    Point2i m_size;
+    Size2i m_size;
     int m_widthStep;
 
     ImageRef();
@@ -163,8 +163,8 @@ private:
     inline void _allocData();
     inline void _copyRef(const ImageRef<Type> & image);
     inline void _moveRef(ImageRef<Type> && image);
-    inline void _copyRef(const ImageRef<Type> & image, const Point2i & offset, const Point2i & size);
-    inline void _moveRef(ImageRef<Type> && image, const Point2i & offset, const Point2i & size);
+    inline void _copyRef(const ImageRef<Type> & image, const Point2i & offset, const Size2i & size);
+    inline void _moveRef(ImageRef<Type> && image, const Point2i & offset, const Size2i & size);
 };
 
 // То же, что Image, но изменять содержимое нельзя
@@ -177,11 +177,11 @@ public:
     ConstImage(ConstImage<Type> && image);
     ConstImage(const ImageRef<Type> & image);
     ConstImage(ImageRef<Type> && image);
-    ConstImage(const ImageRef<Type> & image, const Point2i & offset, const Point2i & size);
-    ConstImage(ImageRef<Type> && image, const Point2i & offset, const Point2i & size);
-    ConstImage(const Point2i & size, const Type * data, bool autoDeleting = true);
+    ConstImage(const ImageRef<Type> & image, const Point2i & offset, const Size2i & size);
+    ConstImage(ImageRef<Type> && image, const Point2i & offset, const Size2i & size);
+    ConstImage(const Size2i & size, const Type * data, bool autoDeleting = true);
     ConstImage(int width, int height, const Type * data, bool autoDeleting = true);
-    ConstImage(const Point2i & size, const Type * data, int widthStep, bool autoDeleting = true);
+    ConstImage(const Size2i & size, const Type * data, int widthStep, bool autoDeleting = true);
     ConstImage(int width, int height, const Type * data, int widthStep, bool autoDeleting = true);
     ~ConstImage();
     ConstImage & operator = (const ConstImage<Type> & image);
@@ -198,14 +198,14 @@ class Image: public ImageRef<Type>
 public:
     Image();
     Image(const Image<Type> & image);
-    Image(const Image<Type> & image, const Point2i & offset, const Point2i & size);
+    Image(const Image<Type> & image, const Point2i & offset, const Size2i & size);
     Image(Image<Type> && image);
-    Image(Image<Type> && image, const Point2i & offset, const Point2i & size);
-    Image(const Point2i & size);
+    Image(Image<Type> && image, const Point2i & offset, const Size2i & size);
+    Image(const Size2i & size);
     Image(int width, int height);
-    Image(const Point2i & size, Type * data, bool autoDeleting = true);
+    Image(const Size2i & size, Type * data, bool autoDeleting = true);
     Image(int width, int height, Type * data, bool autoDeleting = true);
-    Image(const Point2i & size, Type * data, int widthStep, bool autoDeleting = true);
+    Image(const Size2i & size, Type * data, int widthStep, bool autoDeleting = true);
     Image(int width, int height, Type * data, int widthStep, bool autoDeleting = true);
     ~Image();
 

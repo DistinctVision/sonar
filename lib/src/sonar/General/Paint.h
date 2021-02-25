@@ -49,7 +49,7 @@ template < typename Type >
 static void drawCross(const Image<Type> & image, const Point2f & p, float len, const Type & color);
 
 template < typename Type >
-static void drawImage(const Image<Type> & canvasImage, const ImageRef<Type> & image, const Point2f & pos, const Point2f & size);
+static void drawImage(const Image<Type> & canvasImage, const ImageRef<Type> & image, const Point2f & pos, const Size2f & size);
 
 } // namespace painter
 

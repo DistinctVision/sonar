@@ -64,6 +64,10 @@ using Point2i = Point2<int>;
 using Point2f = Point2<float>;
 using Point2d = Point2<double>;
 
+using Size2i = Point2i;
+using Size2f = Point2f;
+using Size2d = Point2d;
+
 } // namespace sonar
 
 #include "impl/Point2_impl.hpp"

@@ -109,19 +109,7 @@ struct less
         }
 };
 
-template <>
-struct less<void>
-{
-
-    template<typename _Ty1, typename _Ty2>
-        constexpr auto operator() (_Ty1&& _Left, _Ty2&& _Right) const ->
-            decltype(static_cast<_Ty1&&>(_Left) < static_cast<_Ty2&&>(_Right))
-        {	// transparently apply operator< to operands
-            return (static_cast<_Ty1&&>(_Left) < static_cast<_Ty2&&>(_Right));
-        }
-};
-
-template <class Compare = less<void>>
+template <class Compare = std::less<void>>
 struct Sampler_min
 {
     Compare cmp;
