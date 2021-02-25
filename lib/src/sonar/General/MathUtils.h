@@ -17,7 +17,7 @@
 #include <cstdlib>
 #include<iostream>
 
-#include <Eigen/Core>
+#include <Eigen/Eigen>
 #include <Eigen/SVD>
 #include <Eigen/Geometry>
 

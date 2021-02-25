@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include <Eigen/Core>
+#include <Eigen/Eigen>
 
 #include "sonar/General/Point2.h"
 

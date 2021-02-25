@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <string>
 
 #include "sonar/General/cast.h"
 

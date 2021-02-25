@@ -1,13 +1,27 @@
 cmake_minimum_required(VERSION 3.1.3)
-project(paper_scanner VERSION 0.2 LANGUAGES CXX)
+project(sonar VERSION 0.2 LANGUAGES CXX)
 
 set(CMAKE_BUILD_TYPE Release)
 
 if (MSVC)
   add_definitions(-D_USE_MATH_DEFINES)
 endif()
+ add_definitions(-DSONAR_SET_EXPORT)
 
 set(CD ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  if(NOT CMAKE_TOOLCHAIN_FILE)
+    if(WIN32)
+      set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory" FORCE)
+    else()
+      set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Installation Directory" FORCE)
+    endif()
+  else()
+    # any cross-compiling
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory" FORCE)
+  endif()
+endif()
 
 option(DEBUG_TOOLS_ENABLED "Debug tools enabled" OFF)
 if (DEBUG_TOOLS_ENABLED)

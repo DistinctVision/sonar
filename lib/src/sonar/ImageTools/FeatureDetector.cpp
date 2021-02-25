@@ -1,6 +1,8 @@
 #include "sonar/ImageTools/FeatureDetector.h"
 
 #include <cassert>
+#include <algorithm>
+#include <random>
 
 #include "sonar/General/cast.h"
 
@@ -191,7 +193,9 @@ FeatureDetector::detectCorners(const ImagePyramid_u & imagePyramid) const
 
     for (size_t i = 0; i < cellOrders.size(); ++i)
         cellOrders[i] = cast<int>(i);
-    random_shuffle(cellOrders.begin(), cellOrders.end());
+    random_device rng;
+    mt19937 urng(rng());
+    shuffle(cellOrders.begin(), cellOrders.end(), urng);
 
     for (vector<int>::iterator it = cellOrders.begin(); it != cellOrders.end(); ++it)
     {
@@ -303,7 +307,9 @@ FeatureDetector::detectCorners(const ImagePyramid_u & imagePyramid, const vector
 
     for (size_t i = 0; i < cellOrders.size(); ++i)
         cellOrders[i] = cast<int>(i);
-    random_shuffle(cellOrders.begin(), cellOrders.end());
+    random_device rng;
+    mt19937 urng(rng());
+    shuffle(cellOrders.begin(), cellOrders.end(), urng);
 
     for (vector<int>::iterator it = cellOrders.begin(); it != cellOrders.end(); ++it)
     {

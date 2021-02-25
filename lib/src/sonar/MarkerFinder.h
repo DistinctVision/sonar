@@ -12,7 +12,7 @@
 #include <vector>
 #include <tuple>
 
-#include <Eigen/Core>
+#include <Eigen/Eigen>
 
 #include <opencv2/core.hpp>
 #include <opencv2/aruco.hpp>

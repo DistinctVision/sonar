@@ -1,5 +1,5 @@
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
-include_directories(${EIGEN3_INCLUDE_DIR})
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIRS})
 add_definitions(-DEIGEN3_LIB)
 
 

@@ -12,7 +12,7 @@
 #include <climits>
 #include <cassert>
 
-#include <Eigen/Core>
+#include <Eigen/Eigen>
 
 #include "sonar/General/Image.h"
 
