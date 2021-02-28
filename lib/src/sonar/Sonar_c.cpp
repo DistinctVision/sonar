@@ -54,6 +54,16 @@ public:
         return m_trackingSystem->process(frame);
     }
 
+    tuple<bool, Matrix3d, Vector3d> getLocalCameraPose() const
+    {
+        if (!m_trackingSystem)
+        {
+            return { false, Matrix3d::Identity(), Vector3d::Zero() };
+        }
+        Pose_d pose =  m_trackingSystem->lastPose();
+        return { true, pose.R, pose.t };
+    }
+
     tuple<bool, Matrix3d, Vector3d> getWorldCameraPose() const
     {
         if (!m_trackingSystem)
@@ -88,6 +98,22 @@ int sonar_process_frame(const void * grayFrameData, int frameWidth, int frameHei
     ConstImage<uchar> frame(frameWidth, frameHeight, reinterpret_cast<const unsigned char*>(grayFrameData), false);
     TrackingState trackingState = SystemContext().instance().process_frame(frame);
     return static_cast<int>(trackingState);
+}
+
+bool sonar_get_camera_local_pose(float * localCameraRotationMatrixData, float * localCameraTranslationData)
+{
+    info << "sonar_get_camera_world_pose(" << SONAR_PTR2STR(localCameraRotationMatrixData) << SONAR_PTR2STR(localCameraTranslationData);
+    bool successFlag;
+    Matrix3d rotationMatrix;
+    Vector3d translation;
+    tie(successFlag, rotationMatrix, translation) = SystemContext::instance().getLocalCameraPose();
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+            localCameraRotationMatrixData[i * 3 + j] = cast<float>(rotationMatrix(i, j));
+        localCameraTranslationData[i] = cast<float>(translation(i));
+    }
+    return successFlag;
 }
 
 bool sonar_get_camera_world_pose(float * worldCameraRotationMatrixData, float * worldCameraPostionData)

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Runtime.InteropServices;
 using UnityEngine.UI;
 
@@ -8,6 +6,7 @@ using UnityEngine.UI;
 public class SonarCameraController : MonoBehaviour
 {
     public RawImage cameraImage;
+    public Transform markerPlaneTransform;
     private WebCamTexture webCamTexture;
 
     void Start()
@@ -63,8 +62,8 @@ public class SonarCameraController : MonoBehaviour
     private TrackingState lastTrackingsState = TrackingState.Undefining;
     private Quaternion lastQ;
     private Vector3 lastPosition;
-    private float rotationSmooth = 0.75f;
-    private float positionSmooth = 0.75f;
+    private float rotationSmooth = 0.9f;
+    private float positionSmooth = 0.9f;
 
     void UpdatePose(TrackingState trackingState)
     {
@@ -73,6 +72,7 @@ public class SonarCameraController : MonoBehaviour
             Quaternion q;
             Vector3 position;
             SonarLib.GetCameraWorldPose(out q, out position);
+            TransformFromMarkerPose(ref q, ref position);
             if (lastTrackingsState == TrackingState.Tracking)
             {
                 q = Quaternion.Slerp(q, lastQ, rotationSmooth);
@@ -89,6 +89,14 @@ public class SonarCameraController : MonoBehaviour
             transform.localPosition = position;
         }
         lastTrackingsState = trackingState;
+    }
+
+    void TransformFromMarkerPose(ref Quaternion q, ref Vector3 position)
+    {
+        if (markerPlaneTransform == null)
+            return;
+        q = markerPlaneTransform.localRotation * q;
+        position = markerPlaneTransform.localRotation * (position - markerPlaneTransform.localPosition);
     }
 }
 
@@ -166,6 +174,9 @@ internal static class SonarLib
 
     [DllImport("sonar")]
     private static extern int sonar_process_frame(System.IntPtr grayFrameData, int frameWidth, int frameHeight);
+
+    [DllImport("sonar")]
+    private static extern bool sonar_get_camera_local_pose(System.IntPtr localCameraRotationMatrixData, System.IntPtr localCameraTranslationData);
 
     [DllImport("sonar")]
     private static extern bool sonar_get_camera_world_pose(System.IntPtr worldCameraRotationMatrixData, System.IntPtr worldCameraPostionData);
