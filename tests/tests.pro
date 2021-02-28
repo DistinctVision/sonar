@@ -52,9 +52,11 @@ INCLUDEPATH += $$PWD/../lib/src
 
 SOURCES += \
     main.cpp \
+    test_marker_pose_tracking.cpp \
     test_marker_transform.cpp
 
 HEADERS += \
+    test_marker_pose_tracking.h \
     test_marker_transform.h
 
 DEFINES += _USE_MATH_DEFINES

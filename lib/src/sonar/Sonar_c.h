@@ -33,7 +33,7 @@ SONAR_EXPORT bool sonar_initialize_tracking_system_for_pinhole(int trackingSyste
 /// @param grayFrameData - buffer of frame. It must have one channel
 /// @param frameWidth - width of frame
 /// @param frameHeight - height of frame
-SONAR_EXPORT void sonar_process_frame(const void * grayFrameData, int frameWidth, int frameHeight);
+SONAR_EXPORT int sonar_process_frame(const void * grayFrameData, int frameWidth, int frameHeight);
 
 /// Get world coordinates of camera
 /// @param worldCameraRotationMatrixData - output buffer for rotation matrix of camera. Buffer must have size for 9 elements.

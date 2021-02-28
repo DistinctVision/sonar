@@ -45,13 +45,13 @@ public:
         return (m_trackingSystem.get() != nullptr);
     }
 
-    void process_frame(const ImageRef<uchar> & frame)
+    TrackingState process_frame(const ImageRef<uchar> & frame)
     {
         if (!m_trackingSystem)
         {
-            return;
+            return TrackingState::Undefining;
         }
-        m_trackingSystem->process(frame);
+        return m_trackingSystem->process(frame);
     }
 
     tuple<bool, Matrix3d, Vector3d> getWorldCameraPose() const
@@ -82,11 +82,12 @@ bool sonar_initialize_tracking_system_for_pinhole(int trackingSystemType, int im
     return SystemContext().instance().createTrackingSystem(static_cast<TrackingSystemType>(trackingSystemType), cameraIntrinsics);
 }
 
-void sonar_process_frame(const void * grayFrameData, int frameWidth, int frameHeight)
+int sonar_process_frame(const void * grayFrameData, int frameWidth, int frameHeight)
 {
     info << "sonar_process_frame(" << SONAR_PTR2STR(grayFrameData) << frameWidth << frameHeight << ")";
     ConstImage<uchar> frame(frameWidth, frameHeight, reinterpret_cast<const unsigned char*>(grayFrameData), false);
-    SystemContext().instance().process_frame(frame);
+    TrackingState trackingState = SystemContext().instance().process_frame(frame);
+    return static_cast<int>(trackingState);
 }
 
 bool sonar_get_camera_world_pose(float * worldCameraRotationMatrixData, float * worldCameraPostionData)

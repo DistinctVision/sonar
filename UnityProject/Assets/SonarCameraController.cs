@@ -24,11 +24,11 @@ public class SonarCameraController : MonoBehaviour
         }
         else
         {
-            focalLength = (float)(webCamTexture.width) / (2.0f * Mathf.Tan(camera.fieldOfView * Mathf.Deg2Rad * 0.5f));
+            float horizontalFieldOfView = Camera.VerticalToHorizontalFieldOfView(camera.fieldOfView, camera.aspect);
+            focalLength = (float)(webCamTexture.width) / (2.0f * Mathf.Tan(horizontalFieldOfView * Mathf.Deg2Rad * 0.5f));
         }
-
         bool successInitialization = SonarLib.InitializeTrackingSystemForPinhole(1, webCamTexture.width, webCamTexture.height,
-                                                                                 new Vector2(focalLength, - focalLength), 
+                                                                                 new Vector2(focalLength, focalLength), 
                                                                                  new Vector2(webCamTexture.width * 0.5f, webCamTexture.height * 0.5f));
         if (!successInitialization)
         {
@@ -55,22 +55,49 @@ public class SonarCameraController : MonoBehaviour
             {
                 gray_colors[i] = (byte)((colors[i].r + colors[i].g + colors[i].b) / 3);
             }
-            SonarLib.ProcessFrame(gray_colors, webCamTexture.width, webCamTexture.height);
-            UpdatePose();
+            TrackingState currentTrackingState = SonarLib.ProcessFrame(gray_colors, webCamTexture.width, webCamTexture.height);
+            UpdatePose(currentTrackingState);
         }
     }
 
-    void UpdatePose()
+    private TrackingState lastTrackingsState = TrackingState.Undefining;
+    private Quaternion lastQ;
+    private Vector3 lastPosition;
+    private float rotationSmooth = 0.75f;
+    private float positionSmooth = 0.75f;
+
+    void UpdatePose(TrackingState trackingState)
     {
-        Quaternion q;
-        Vector3 position;
-        SonarLib.GetCameraWorldPose(out q, out position);
-        transform.localRotation = q;
-        transform.localPosition = position;
+        if (trackingState == TrackingState.Tracking)
+        {
+            Quaternion q;
+            Vector3 position;
+            SonarLib.GetCameraWorldPose(out q, out position);
+            if (lastTrackingsState == TrackingState.Tracking)
+            {
+                q = Quaternion.Slerp(q, lastQ, rotationSmooth);
+                position = Vector3.Slerp(position, lastPosition, positionSmooth);
+                lastQ = q;
+                lastPosition = position;
+            }
+            else
+            {
+                q = lastQ;
+                position = lastPosition;
+            }
+            transform.localRotation = q;
+            transform.localPosition = position;
+        }
+        lastTrackingsState = trackingState;
     }
 }
 
-
+enum TrackingState: int
+{
+    Undefining = 0,
+    Tracking,
+    LostTracking
+};
 
 // Define the functions which can be called from the .dll.
 internal static class SonarLib
@@ -85,15 +112,17 @@ internal static class SonarLib
                                                             opticalCenter.x, opticalCenter.y);
     }
 
-    public static void ProcessFrame(byte[] grayColors, int imageWidth, int imageHeight)
+    public static TrackingState ProcessFrame(byte[] grayColors, int imageWidth, int imageHeight)
     {
+        int trackingState = (int)TrackingState.Undefining;
         unsafe
         {
             fixed (byte* ptr = &grayColors[0])
             {
-                sonar_process_frame((System.IntPtr)ptr, imageWidth, imageHeight);
+                trackingState = sonar_process_frame((System.IntPtr)ptr, imageWidth, imageHeight);
             }
         }
+        return (TrackingState)trackingState;
     }
 
     public static Quaternion QuaternionFromMatrix(float[] m)
@@ -136,7 +165,7 @@ internal static class SonarLib
                                                                             float fx, float fy, float cx, float cy);
 
     [DllImport("sonar")]
-    private static extern void sonar_process_frame(System.IntPtr grayFrameData, int frameWidth, int frameHeight);
+    private static extern int sonar_process_frame(System.IntPtr grayFrameData, int frameWidth, int frameHeight);
 
     [DllImport("sonar")]
     private static extern bool sonar_get_camera_world_pose(System.IntPtr worldCameraRotationMatrixData, System.IntPtr worldCameraPostionData);

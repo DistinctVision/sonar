@@ -26,7 +26,7 @@ class MarkerTrackingSystem: public AbstractTrackingSystem
 public:
     MarkerTrackingSystem(const std::shared_ptr<CameraIntrinsics> & cameraIntrinsics);
 
-    void process(const ImageRef<uchar> & grayImage) override;
+    TrackingState process(const ImageRef<uchar> & grayImage) override;
 
 private:
     std::shared_ptr<MarkerFinder> m_markerFinder;

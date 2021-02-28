@@ -66,7 +66,7 @@ public:
 
     /// Main method for processing image stream. Need call this method for every frame of stream.
     /// @param grayImage - input gray image of stream
-    virtual void process(const ImageRef<uchar> & grayImage) = 0;
+    virtual TrackingState process(const ImageRef<uchar> & grayImage) = 0;
 
 protected:
     std::shared_ptr<CameraIntrinsics> m_cameraIntrinsics;

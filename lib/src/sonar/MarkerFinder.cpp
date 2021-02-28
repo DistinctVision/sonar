@@ -95,9 +95,9 @@ Matrix3f MarkerFinder::computeAffineTransformOfMarker(const vector<Point2f> & im
 
     vector<Vector2d, Eigen::aligned_allocator<Vector2d>> markerPoints(4);
     markerPoints[0] << 0.0, 0.0;
-    markerPoints[1] << 0.0, 1.0;
+    markerPoints[1] << 1.0, 0.0;
     markerPoints[2] << 1.0, 1.0;
-    markerPoints[3] << 1.0, 0.0;
+    markerPoints[3] << 0.0, 1.0;
 
     MatrixXd A(8, 6);
     VectorXd b(8);
@@ -130,9 +130,9 @@ Matrix3f MarkerFinder::computeHomographyTransformOfMarker(const vector<Point2f> 
 
     vector<Vector2d, Eigen::aligned_allocator<Vector2d>> markerPoints(4);
     markerPoints[0] << 0.0, 0.0;
-    markerPoints[1] << 0.0, 1.0;
+    markerPoints[1] << 1.0, 0.0;
     markerPoints[2] << 1.0, 1.0;
-    markerPoints[3] << 1.0, 0.0;
+    markerPoints[3] << 0.0, 1.0;
 
     MatrixXd A(9, 9);
     int offset = 0;
@@ -178,6 +178,15 @@ Pose_f MarkerFinder::getPose(const vector<Point2f> & imageMarkerCorners, const E
     pose.R.col(1) = r1;
     pose.R.col(2) = r2;
     pose.t = Rt.col(2) / scale;
+    Vector3f worldPosition = - pose.R.transpose() * pose.t;
+    if (worldPosition.z() < 0.0f)
+    {
+        pose.R.col(0) = (- pose.R.col(0)).eval();
+        pose.R.col(1) = (- pose.R.col(1)).eval();
+        pose.t = - pose.t;
+    }
+    // convert to quaternion and back for fix rotation matrix
+    pose.R = Quaternionf(pose.R).toRotationMatrix();
     return pose;
 }
 
