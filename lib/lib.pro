@@ -6,12 +6,7 @@ CONFIG += c++17
 CONFIG -= app_bundle
 CONFIG -= qt
 
-TEST_BUILD_SHARED = $$(BUILD_SHARED)
-isEmpty(TEST_BUILD_SHARED) {
-    CONFIG += static
-} else {
-    CONFIG += shared
-}
+CONFIG += staticlib
 
 DEFINES += SONAR_SET_EXPORT
 

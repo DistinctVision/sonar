@@ -15,20 +15,20 @@ class PinholeCameraIntrinsics:
         public CameraIntrinsics
 {
 public:
-    PinholeCameraIntrinsics(const Point2i & resolution,
+    PinholeCameraIntrinsics(const Size2i & resolution,
                             const Eigen::Vector2f & focalLength,
                             const Eigen::Vector2f & opticalCenter);
 
-    CameraType::Enum type() const override;
+    CameraType type() const override;
 
     Eigen::Vector2f focalLength() const;
     Eigen::Vector2f opticalCenter() const;
 
-    virtual Point2f projectPoint(const Point2f & point) const override;
-    virtual std::vector<Point2f> projectPoints(const std::vector<Point2f> & points) const override;
+    Point2f projectPoint(const Point2f & point) const override;
+    std::vector<Point2f> projectPoints(const std::vector<Point2f> & points) const override;
 
-    virtual Point2f unprojectPoint(const Point2f & point) const override;
-    virtual std::vector<Point2f> unprojectPoints(const std::vector<Point2f> & points) const override;
+    Point2f unprojectPoint(const Point2f & point) const override;
+    std::vector<Point2f> unprojectPoints(const std::vector<Point2f> & points) const override;
 
     Eigen::Matrix4f glProjectionMatrix(float depthNear, float depthFar) const;
 

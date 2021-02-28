@@ -11,6 +11,8 @@
 
 #include <memory>
 
+#include <opencv2/core.hpp>
+
 #include "AbstractTrackingSystem.h"
 
 namespace sonar {
@@ -27,8 +29,11 @@ public:
     void process(const ImageRef<uchar> & grayImage) override;
 
 private:
-    std::shared_ptr<CameraIntrinsics> m_cameraIntrinsics;
     std::shared_ptr<MarkerFinder> m_markerFinder;
+
+    /// Check flip of image for current camera intrinsics 
+    /// @return flags - (horizontalFlipping, verticalFlipping)
+    std::tuple<bool, bool> _checkFlippings() const;
 };
 
 } // namespace sonar

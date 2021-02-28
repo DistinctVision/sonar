@@ -27,7 +27,7 @@ windows {
                 -lopencv_videoio$$OPENCV_VERSION \
                 -lopencv_highgui$$OPENCV_VERSION \
                 -lopencv_imgcodecs$$OPENCV_VERSION \
-                #-lopencv_calib3d$$OPENCV_VERSION \
+                -lopencv_calib3d$$OPENCV_VERSION \
                 -lopencv_flann$$OPENCV_VERSION \
                 -lopencv_aruco$$OPENCV_VERSION
         }
@@ -43,7 +43,7 @@ windows {
         -lopencv_videoio \
         -lopencv_highgui \
         -lopencv_imgcodecs \
-        #-lopencv_calib3d \
+        -lopencv_calib3d \
         -lopencv_flann \
         -lopencv_aruco
 } else {

@@ -17,34 +17,25 @@
 
 namespace sonar {
 
-struct CameraType
-{
-    enum Enum
-    {
-        Undefined = 0,
-        Pinhole
-    };
-};
-
 class CameraIntrinsics
 {
 public:
-    CameraIntrinsics(const Point2i & resolution);
+    CameraIntrinsics(const Size2i & resolution);
 
     virtual ~CameraIntrinsics();
 
-    virtual CameraType::Enum type() const;
+    virtual CameraType type() const;
 
-    Point2i resolution() const;
+    Size2i resolution() const;
 
-    virtual Point2f projectPoint(const Point2f & point) const;
+    virtual Point2f projectPoint(const Point2f & point) const = 0;
     virtual std::vector<Point2f> projectPoints(const std::vector<Point2f> & points) const;
 
-    virtual Point2f unprojectPoint(const Point2f & point) const;
+    virtual Point2f unprojectPoint(const Point2f & point) const = 0;
     virtual std::vector<Point2f> unprojectPoints(const std::vector<Point2f> & points) const;
 
 private:
-    const Point2i m_resolution;
+    const Size2i m_resolution;
 };
 
 } // namespace sonar

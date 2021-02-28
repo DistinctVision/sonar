@@ -7,45 +7,37 @@ using namespace Eigen;
 
 namespace sonar {
 
-CameraIntrinsics::CameraIntrinsics(const Point2i & resolution):
+CameraIntrinsics::CameraIntrinsics(const Size2i & resolution):
     m_resolution(resolution)
 {}
 
 CameraIntrinsics::~CameraIntrinsics()
 {}
 
-CameraType::Enum CameraIntrinsics::type() const
+CameraType CameraIntrinsics::type() const
 {
     return CameraType::Undefined;
 }
 
-Point2i CameraIntrinsics::resolution() const
+Size2i CameraIntrinsics::resolution() const
 {
     return m_resolution;
 }
 
-Point2f CameraIntrinsics::projectPoint(const Point2f & point) const
-{
-    SONAR_UNUSED(point);
-    throw std::runtime_error("Not implemented");
-}
-
 vector<Point2f> CameraIntrinsics::projectPoints(const vector<Point2f> & points) const
 {
-    SONAR_UNUSED(points);
-    throw std::runtime_error("Not implemented");
-}
-
-Point2f CameraIntrinsics::unprojectPoint(const Point2f & point) const
-{
-    SONAR_UNUSED(point);
-    throw std::runtime_error("Not implemented");
+    vector<Point2f> p_points(points.size());
+    for (size_t i = 0; i < points.size(); ++i)
+        p_points[i] = this->projectPoint(p_points[i]);
+    return p_points;
 }
 
 vector<Point2f> CameraIntrinsics::unprojectPoints(const vector<Point2f> & points) const
 {
-    SONAR_UNUSED(points);
-    throw std::runtime_error("Not implemented");
+    vector<Point2f> u_points(points.size());
+    for (size_t i = 0; i < points.size(); ++i)
+        u_points[i] = this->unprojectPoint(points[i]);
+    return u_points;
 }
 
 } // namespace sonar

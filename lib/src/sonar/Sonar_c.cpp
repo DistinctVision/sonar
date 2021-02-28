@@ -14,6 +14,7 @@
 
 #include <Eigen/Eigen>
 
+#include "sonar/General/Logger.h"
 #include "sonar/General/cast.h"
 #include "sonar/General/Point2.h"
 #include "sonar/General/Image.h"
@@ -75,20 +76,26 @@ extern "C" {
 bool sonar_initialize_tracking_system_for_pinhole(int trackingSystemType, int imageWidth, int imageHeight,
                                                   float fx, float fy, float cx, float cy)
 {
+    info << "sonar_initialize_tracking_system_for_pinhole(" << 1 << imageWidth << imageHeight << fx << fy << cx << cy << ")";
     auto cameraIntrinsics = make_shared<PinholeCameraIntrinsics>(Size2i(imageWidth, imageHeight),
                                                                  Vector2f(fx, fy), Vector2f(cx, cy));
     return SystemContext().instance().createTrackingSystem(static_cast<TrackingSystemType>(trackingSystemType), cameraIntrinsics);
 }
 
-void sonar_process_frame(void * grayFrameData, int frameWidth, int frameHeight)
+void sonar_process_frame(const void * grayFrameData, int frameWidth, int frameHeight)
 {
+    info << "sonar_process_frame(" << SONAR_PTR2STR(grayFrameData) << frameWidth << frameHeight << ")";
     ConstImage<uchar> frame(frameWidth, frameHeight, reinterpret_cast<const unsigned char*>(grayFrameData), false);
     SystemContext().instance().process_frame(frame);
 }
 
 bool sonar_get_camera_world_pose(float * worldCameraRotationMatrixData, float * worldCameraPostionData)
 {
-    auto [successFlag, rotationMatrix, postion] = SystemContext::instance().getWorldCameraPose();
+    info << "sonar_get_camera_world_pose(" << SONAR_PTR2STR(worldCameraRotationMatrixData) << SONAR_PTR2STR(worldCameraPostionData);
+    bool successFlag;
+    Matrix3d rotationMatrix;
+    Vector3d postion;
+    tie(successFlag, rotationMatrix, postion) = SystemContext::instance().getWorldCameraPose();
     for (int i = 0; i < 3; ++i)
     {
         for (int j = 0; j < 3; ++j)

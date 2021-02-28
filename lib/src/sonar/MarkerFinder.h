@@ -53,8 +53,10 @@ public:
 
     /// Do finding of marker
     /// @param grayImage - input image for search
+    /// @param.horizontalFlip - flag of horizontal flipping image
     /// @return coordinates of marker corners or empty vector if marker is not found
-    std::vector<Point2f> findMarker(const ImageRef<uchar> & grayImage);
+    std::vector<Point2f> findMarker(const ImageRef<uchar> & grayImage, 
+                                    bool horizontalFlipping = false, bool verticalFlipping = false);
 
     /// Get affine transform of marker (just test fnction).
     /// @param markerCorners - image coordinates of marker corners.
@@ -85,6 +87,10 @@ private:
 
     int m_targetMarkerId;
     int m_lastMarkerId;
+
+    cv::Mat _prepeareFrameForMarkerDetection(const ImageRef<uchar> & frame, bool horizontalFlipping, bool verticalFlipping) const;
+    std::vector<Point2f> _unwarpPoints(const std::vector<Point2f> & points, 
+                                       const Size2f & imageSize, bool horizontalFlipping, bool verticalFlipping) const;
 };
 
 } // namespace sonar

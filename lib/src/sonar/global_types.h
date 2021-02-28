@@ -11,9 +11,8 @@
 
 #include <Eigen/Eigen>
 
+#include "sonar/General/macros.h"
 #include "sonar/General/Point2.h"
-
-#define SONAR_UNUSED(x) static_cast<void>(x)
 
 #if defined(OPENGV_LIB)
 
@@ -63,6 +62,12 @@ using Vectors3d = std::vector<Eigen::Vector3d, Eigen::aligned_allocator<Eigen::V
 
 using Matrices3f = std::vector<Eigen::Matrix3f, Eigen::aligned_allocator<Eigen::Matrix3f>>;
 using Matrices3d = std::vector<Eigen::Matrix3d, Eigen::aligned_allocator<Eigen::Matrix3d>>;
+
+enum class CameraType
+{
+    Undefined = 0,
+    Pinhole
+};
 
 template <typename Type>
 struct Pose

@@ -7,7 +7,7 @@ using namespace Eigen;
 
 namespace sonar {
 
-PinholeCameraIntrinsics::PinholeCameraIntrinsics(const Point2i & resolution,
+PinholeCameraIntrinsics::PinholeCameraIntrinsics(const Size2i & resolution,
                                                  const Vector2f & focalLength,
                                                  const Vector2f & opticalCenter):
     CameraIntrinsics(resolution),
@@ -15,7 +15,7 @@ PinholeCameraIntrinsics::PinholeCameraIntrinsics(const Point2i & resolution,
     m_opticalCenter(opticalCenter)
 {}
 
-CameraType::Enum PinholeCameraIntrinsics::type() const
+CameraType PinholeCameraIntrinsics::type() const
 {
     return CameraType::Pinhole;
 }

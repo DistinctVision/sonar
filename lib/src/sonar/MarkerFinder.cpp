@@ -42,13 +42,13 @@ void MarkerFinder::reset()
     m_lastMarkerId = -1;
 }
 
-vector<Point2f> MarkerFinder::findMarker(const ImageRef<uchar> & grayImage)
+vector<Point2f> MarkerFinder::findMarker(const ImageRef<uchar> & grayImage, bool horizontalFlipping, bool verticalFlipping)
 {
     vector<int> markersIds;
-    vector<vector<cv::Point2f>> markerCorners;
+    vector<vector<cv::Point2f>> markersCorners;
 
-    cv::Mat cvGrayImage = image_utils::convertToCvMat(grayImage);
-    cv::aruco::detectMarkers(cvGrayImage, m_dictionary, markerCorners, markersIds, m_detectorParameters);
+    cv::Mat cvGrayImage = _prepeareFrameForMarkerDetection(grayImage, horizontalFlipping, verticalFlipping);
+    cv::aruco::detectMarkers(cvGrayImage, m_dictionary, markersCorners, markersIds, m_detectorParameters);
 
     if (markersIds.empty())
         return {};
@@ -76,7 +76,8 @@ vector<Point2f> MarkerFinder::findMarker(const ImageRef<uchar> & grayImage)
 
     m_lastMarkerId = markersIds[cast<size_t>(currentMarkerIndex)];
 
-    return cv_cast<float>(markerCorners[cast<size_t>(currentMarkerIndex)]);
+    vector<Point2f> currentMarkerCorners = cv_cast<float>(markersCorners[cast<size_t>(currentMarkerIndex)]);
+    return _unwarpPoints(currentMarkerCorners, cast<float>(grayImage.size()), horizontalFlipping, verticalFlipping);
 }
 
 tuple<Matrix3f, bool> MarkerFinder::findAffineTransformOfMarker(const ImageRef<uchar> & grayImage)
@@ -178,6 +179,73 @@ Pose_f MarkerFinder::getPose(const vector<Point2f> & imageMarkerCorners, const E
     pose.R.col(2) = r2;
     pose.t = Rt.col(2) / scale;
     return pose;
+}
+
+
+cv::Mat MarkerFinder::_prepeareFrameForMarkerDetection(const ImageRef<uchar> & frame, bool horizontalFlipping, bool verticalFlipping) const
+{
+    cv::Mat cvFrame = image_utils::convertToCvMat(frame);
+    if (horizontalFlipping)
+    {
+        if (verticalFlipping)
+        {
+            cv::flip(cvFrame, cvFrame, -1);
+        }
+        else
+        {
+            cv::flip(cvFrame, cvFrame, 1);
+        }
+    }
+    else
+    {
+        if (verticalFlipping)
+        {
+            cv::flip(cvFrame, cvFrame, 0);
+        }
+    }
+    return cvFrame;
+}
+
+vector<Point2f> MarkerFinder::_unwarpPoints(const vector<Point2f> & points, 
+                                            const Size2f & imageSize, bool horizontalFlipping, bool verticalFlipping) const
+{
+    vector<Point2f> outPoints(points.size());
+    if (horizontalFlipping)
+    {
+        if (verticalFlipping)
+        {
+            for (size_t i = 0; i < points.size(); ++i)
+            {
+                const Point2f & p = points[i];
+                outPoints[i].set(imageSize.x - 1.0f - p.x, imageSize.y - 1.0f - p.y);
+            }
+        }
+        else
+        {
+            for (size_t i = 0; i < points.size(); ++i)
+            {
+                const Point2f& p = points[i];
+                outPoints[i].set(imageSize.x - 1.0f - p.x, p.y);
+            }
+        }
+    }
+    else
+    {
+        if (verticalFlipping)
+        {
+            for (size_t i = 0; i < points.size(); ++i)
+            {
+                const Point2f& p = points[i];
+                outPoints[i].set(p.x, imageSize.y - 1.0f - p.y);
+            }
+        }
+        else
+        {
+            for (size_t i = 0; i < points.size(); ++i)
+                outPoints[i] = points[i];
+        }
+    }
+    return outPoints;
 }
 
 } // namespace sonar

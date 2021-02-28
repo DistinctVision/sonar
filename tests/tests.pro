@@ -44,7 +44,6 @@ linux {
 }
 
 include (../lib/external/external_libs.pri)
-include (../lib/external/opencv.pri)
 
 INCLUDEPATH += $$PWD/../lib/include
 DEPENDPATH += $$PWD/../lib/include
