@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class SonarCameraController : MonoBehaviour
 {
     public RawImage cameraImage;
-    public Transform markerPlaneTransform;
     private WebCamTexture webCamTexture;
 
     void Start()
@@ -72,7 +71,6 @@ public class SonarCameraController : MonoBehaviour
             Quaternion q;
             Vector3 position;
             SonarLib.GetCameraWorldPose(out q, out position);
-            TransformFromMarkerPose(ref q, ref position);
             if (lastTrackingsState == TrackingState.Tracking)
             {
                 q = Quaternion.Slerp(q, lastQ, rotationSmooth);
@@ -89,14 +87,6 @@ public class SonarCameraController : MonoBehaviour
             transform.localPosition = position;
         }
         lastTrackingsState = trackingState;
-    }
-
-    void TransformFromMarkerPose(ref Quaternion q, ref Vector3 position)
-    {
-        if (markerPlaneTransform == null)
-            return;
-        q = markerPlaneTransform.localRotation * q;
-        position = markerPlaneTransform.localRotation * (position - markerPlaneTransform.localPosition);
     }
 }
 
