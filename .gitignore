@@ -35,6 +35,7 @@ articles/.vscode/settings.json
 
 lib/build/*
 build/*
+build-android/*
 CMakeSettings.json
 
 *.csproj
