@@ -6,28 +6,36 @@ using UnityEngine.UI;
 public class SonarCameraController : MonoBehaviour
 {
     public RawImage cameraImage;
-    private WebCamTexture webCamTexture;
+    private WebCamTexture m_webCamTexture;
+    private Camera m_camera;
+    private RectTransform m_cameraImageTransform;
+    private float m_focalLength;
 
     void Start()
     {
-        webCamTexture = new WebCamTexture(WebCamTexture.devices[0].name, 640, 480);
-        cameraImage.texture = webCamTexture;
-        webCamTexture.Play();
-        
-        float focalLength = (float)(webCamTexture.width);
-        Camera camera = GetComponent<Camera>();
-        if (camera == null)
+        m_webCamTexture = new WebCamTexture(WebCamTexture.devices[0].name, 640, 480);
+        cameraImage.texture = m_webCamTexture;
+        m_webCamTexture.Play();
+        m_camera = GetComponent<Camera>();
+        this.m_cameraImageTransform = cameraImage.GetComponent<RectTransform>();
+        m_focalLength = (float)(m_webCamTexture.width);
+        if (m_camera == null)
         {
             Debug.LogError("Camera component is found.");
         }
         else
         {
-            float horizontalFieldOfView = Camera.VerticalToHorizontalFieldOfView(camera.fieldOfView, camera.aspect);
-            focalLength = (float)(webCamTexture.width) / (2.0f * Mathf.Tan(horizontalFieldOfView * Mathf.Deg2Rad * 0.5f));
+#if UNITY_ANDROID
+            camera.fieldOfView = 60;
+#endif
+            float horizontalFieldOfView = Camera.VerticalToHorizontalFieldOfView(m_camera.fieldOfView, m_camera.aspect);
+            m_focalLength = 1.0f / (2.0f * Mathf.Tan(horizontalFieldOfView * Mathf.Deg2Rad * 0.5f));
         }
-        bool successInitialization = SonarLib.InitializeTrackingSystemForPinhole(1, webCamTexture.width, webCamTexture.height,
-                                                                                 new Vector2(focalLength, focalLength), 
-                                                                                 new Vector2(webCamTexture.width * 0.5f, webCamTexture.height * 0.5f));
+        m_cameraImageTransform = cameraImage.GetComponent<RectTransform>();
+        float pixelFocalLength = (float)(m_webCamTexture.width) * m_focalLength;
+        bool successInitialization = SonarLib.InitializeTrackingSystemForPinhole(1, m_webCamTexture.width, m_webCamTexture.height,
+                                                                                 new Vector2(pixelFocalLength, pixelFocalLength), 
+                                                                                 new Vector2(m_webCamTexture.width * 0.5f, m_webCamTexture.height * 0.5f));
         if (!successInitialization)
         {
             Debug.LogError("Sonar initialization fail.");
@@ -45,24 +53,52 @@ public class SonarCameraController : MonoBehaviour
 
     void Update()
     {
-        if (webCamTexture.isPlaying)
+        UpdateViewAngles();
+        if (m_webCamTexture.isPlaying)
         {
-            Color32[] colors = webCamTexture.GetPixels32();
+            Color32[] colors = m_webCamTexture.GetPixels32();
             byte[] gray_colors = new byte[colors.Length];
             for (int i = 0; i < colors.Length; ++i)
             {
                 gray_colors[i] = (byte)((colors[i].r + colors[i].g + colors[i].b) / 3);
             }
-            TrackingState currentTrackingState = SonarLib.ProcessFrame(gray_colors, webCamTexture.width, webCamTexture.height);
+            TrackingState currentTrackingState = SonarLib.ProcessFrame(gray_colors, m_webCamTexture.width, m_webCamTexture.height);
             UpdatePose(currentTrackingState);
+        }
+    }
+
+    void UpdateViewAngles()
+    {
+        if ((m_camera == null) || (m_cameraImageTransform == null))
+            return;
+        float screenAspectRatio = (float)Screen.width / (float)Screen.height;
+        float cameraAspectRatio = (float)(m_webCamTexture.width) / (float)(m_webCamTexture.height);
+        float horizontalViewAngle = 2.0f * Mathf.Rad2Deg * Mathf.Atan(1.0f / (2.0f * m_focalLength));
+        if (screenAspectRatio < cameraAspectRatio)
+        {
+            float s = cameraAspectRatio / screenAspectRatio;
+            m_cameraImageTransform.localScale = new Vector3(s, 1.0f, 1.0f);
+            float verticalViewAngle = Camera.HorizontalToVerticalFieldOfView(horizontalViewAngle, cameraAspectRatio);
+            m_camera.fieldOfView = verticalViewAngle;
+        }
+        else
+        {
+            float s = screenAspectRatio / cameraAspectRatio;
+            m_cameraImageTransform.localScale = new Vector3(1.0f, s, 1.0f);
+            m_camera.fieldOfView = Camera.HorizontalToVerticalFieldOfView(horizontalViewAngle, screenAspectRatio); ;
         }
     }
 
     private TrackingState lastTrackingsState = TrackingState.Undefining;
     private Quaternion lastQ;
     private Vector3 lastPosition;
+#if UNITY_ANDROID
+    private float rotationSmooth = 0.7f;
+    private float positionSmooth = 0.7f;
+#else
     private float rotationSmooth = 0.9f;
     private float positionSmooth = 0.9f;
+#endif
 
     void UpdatePose(TrackingState trackingState)
     {
