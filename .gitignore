@@ -43,7 +43,6 @@ UnityProject/ExportedObj/
 UnityProject/.consulo/
 UnityProject/*.csproj
 UnityProject/*.unityproj
-UnityProject/*.sln
 UnityProject/*.suo
 UnityProject/*.tmp
 UnityProject/*.user
