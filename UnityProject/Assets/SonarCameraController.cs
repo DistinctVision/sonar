@@ -26,7 +26,7 @@ public class SonarCameraController : MonoBehaviour
         else
         {
 #if UNITY_ANDROID
-            camera.fieldOfView = 60;
+            GetComponent<Camera>().fieldOfView = 50;
 #endif
             float horizontalFieldOfView = Camera.VerticalToHorizontalFieldOfView(m_camera.fieldOfView, m_camera.aspect);
             m_focalLength = 1.0f / (2.0f * Mathf.Tan(horizontalFieldOfView * Mathf.Deg2Rad * 0.5f));
