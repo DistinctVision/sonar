@@ -113,8 +113,8 @@ public class SonarCameraController : MonoBehaviour
     private Quaternion lastQ;
     private Vector3 lastPosition;
 
-    private float rotationSmooth = 0.8f;
-    private float positionSmooth = 0.8f;
+    private float rotationSmooth = 0.5f;
+    private float positionSmooth = 0.5f;
 
     void UpdatePose(TrackingState trackingState)
     {
