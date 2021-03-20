@@ -1,5 +1,10 @@
-# sonar  
+# Sonar  
 Augmented reality library for Android, Windows, Linux
+
+### Articles in Russian
+[Основы векторной алгебры](https://habr.com/ru/post/547876/)
+[Маркеры](https://habr.com/ru/post/547898/)
+
 
 ## Dependencies
 [OpenCV](https://github.com/opencv/opencv) with [contrib](https://github.com/opencv/opencv_contrib) - module aruco is used.  
