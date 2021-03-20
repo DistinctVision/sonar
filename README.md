@@ -2,8 +2,8 @@
 Augmented reality library for Android, Windows, Linux
 
 ### Articles in Russian
-[Основы векторной алгебры](https://habr.com/ru/post/547876/)
-[Маркеры](https://habr.com/ru/post/547898/)
+- [Основы векторной алгебры](https://habr.com/ru/post/547876/)  
+- [Маркеры](https://habr.com/ru/post/547898/)
 
 
 ## Dependencies
